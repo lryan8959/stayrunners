@@ -43,7 +43,7 @@ services:
     build:
       context: ./services/redis
       dockerfile: Dockerfile
-    container_name: redisserver
+    container_name: redisserverx
     ports:
       - "6379:6379"
     restart: always
