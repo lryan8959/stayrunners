@@ -18,5 +18,5 @@ RUN nest build
 
 
 
-EXPOSE 3000
+EXPOSE 3120
 CMD [ "pm2-runtime", "start", "ecosystem.config.js" ]
