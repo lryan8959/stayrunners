@@ -4,7 +4,8 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseOmModule } from './mongoose.om/mongoose.om.module';
-
+import { CacheRedisModule } from './cache.redis/cache.redis.module';
+import { RedisModule } from './redis/redis.module';
 @Module({
   imports: [
     UserModule,
@@ -12,6 +13,8 @@ import { MongooseOmModule } from './mongoose.om/mongoose.om.module';
       envFilePath: ['.env', '.env.development'],
     }),
     MongooseOmModule,
+    CacheRedisModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],
