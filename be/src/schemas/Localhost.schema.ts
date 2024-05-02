@@ -16,13 +16,13 @@ export class Localhost {
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'City' })
     city: City;
 
-    @Prop({ required: false })
+    @Prop({ required: true })
     verification_code: number;
 
-    @Prop({ required: false })
+    @Prop({ required: true, default: Date.now})
     verification_code_created_at: Date;
 
-    @Prop({ default: false })
+    @Prop({ required: true, default: false })
     code_verified: boolean;
 
     @Prop({ default: Date.now })
