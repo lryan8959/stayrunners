@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CountriesService } from './countries.service';
 import { CountriesController } from './countries.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Country, CountrySchema } from './schemas/country.schema';
+import { Country, CountrySchema } from 'src/schemas/Country.schema';
 
 @Module({
   imports: [

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
-import { Country } from "./country.schema";
+import { Country } from "./Country.schema";
 
 @Schema()
 export class City {

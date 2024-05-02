@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Country } from './schemas/country.schema';
 import { Model } from 'mongoose';
 import { CreateCountryDto } from './dtos/CreateCountry.dto';
+import { Country } from 'src/schemas/Country.schema';
 
 @Injectable()
 export class CountriesService {
