@@ -10,17 +10,20 @@ export class Localhost {
     @Prop({ required: true, unique: true }) // Assuming email is unique for each local host
     email: string;
 
-    @Prop({ required: true })
+    @Prop({ required: false })
     password: string;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'City' })
+    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'City' })
     city: City;
 
-    @Prop()
-    verification_code: string;
+    @Prop({ required: false })
+    verification_code: number;
 
-    @Prop()
+    @Prop({ required: false })
     verification_code_created_at: Date;
+
+    @Prop({ default: false })
+    code_verified: boolean;
 
     @Prop({ default: Date.now })
     created_at: Date;
