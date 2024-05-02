@@ -6,15 +6,17 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseOmModule } from './mongoose.om/mongoose.om.module';
 import { CacheRedisModule } from './cache.redis/cache.redis.module';
 import { RedisModule } from './redis/redis.module';
+import { CountriesModule } from './countries/countries.module';
 @Module({
   imports: [
     UserModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.development'],
-    }),
-    MongooseOmModule,
-    CacheRedisModule,
-    RedisModule,
+    }), 
+    MongooseOmModule, CountriesModule,
+    
+    // CacheRedisModule,
+    // RedisModule, 
   ],
   controllers: [AppController],
   providers: [AppService],
