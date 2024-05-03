@@ -8,13 +8,14 @@ import { CacheRedisModule } from './cache.redis/cache.redis.module';
 import { RedisModule } from './redis/redis.module';
 import { CountriesModule } from './countries/countries.module';
 import { LocalhostsModule } from './localhosts/localhosts.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     UserModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.development'],
     }), 
-    MongooseOmModule, CountriesModule, LocalhostsModule,
+    MongooseOmModule, CountriesModule, LocalhostsModule, AuthModule,
     
     // CacheRedisModule,
     // RedisModule, 
