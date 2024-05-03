@@ -25,6 +25,9 @@ export class Localhost {
     @Prop({ required: true, default: false })
     code_verified: boolean;
 
+    @Prop({ required: false })
+    code_verified_at: Date;
+
     @Prop({ default: Date.now })
     created_at: Date;
 
