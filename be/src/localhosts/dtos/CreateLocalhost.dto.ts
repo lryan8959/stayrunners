@@ -18,6 +18,5 @@ export class CreateLocalhostDto {
     city: string;
 
     @Optional()
-    @IsNumber()
     verification_code: number;
 }

@@ -14,10 +14,18 @@ export class LocalhostsService {
     async createLocalhost(createLocalhostDto: CreateLocalhostDto) {
         const email = createLocalhostDto.email;
         const findByEmail = await this.localhostModel.findOne({ email }).exec();
-        console.log(findByEmail);
-        if (findByEmail) {
+        if (findByEmail && findByEmail.code_verified) {
             return 'Email already exists';
         }
+
+        if (findByEmail && !findByEmail.code_verified) {
+            const verificationcode = Math.floor(100000 + Math.random() * 900000);
+            findByEmail.verification_code = verificationcode;
+            findByEmail.verification_code_created_at = new Date();
+            await findByEmail.save();
+            return { _id: findByEmail._id, code_verified: false };
+        }
+
         const verificationcode = Math.floor(100000 + Math.random() * 900000);
         createLocalhostDto.verification_code = verificationcode;
         // verification code send to local host's email
@@ -61,5 +69,20 @@ export class LocalhostsService {
         await localhost.save();
         return { _id: localhost._id, code_verified: true, password };
         
+    }
+
+    async resendVerificationCode (id) {
+        const localhost = await this.localhostModel.findById(id).exec();
+        if (!localhost) {
+            return 'Local does not exist';
+        }
+        if (localhost?.code_verified) {
+            return 'Code already verified';
+        }
+        const verificationcode = Math.floor(100000 + Math.random() * 900000);
+        localhost.verification_code = verificationcode;
+        localhost.verification_code_created_at = new Date();
+        await localhost.save();
+        return { _id: localhost._id, code_verified: false };
     }
 }

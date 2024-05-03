@@ -1,4 +1,4 @@
-import { Body, Controller, HttpException, Param, Patch, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Param, Patch, Post, Res } from '@nestjs/common';
 import { LocalhostsService } from './localhosts.service';
 import { CreateLocalhostDto } from './dtos/CreateLocalhost.dto';
 import { Response } from 'express';
@@ -36,6 +36,22 @@ export class LocalhostsController {
             throw new HttpException('Verification code has expired', 400);
         } else if (verified) {
             return res.status(200).json(verified);
+        } else {
+            throw new HttpException('Internal server error', 500);
+        }
+    }
+
+    @Get('/resend-verification-code/:id')
+    async resendVerificationCode(@Param('id') id: string, @Res() res: Response) {
+        const isValid = mongoose.Types.ObjectId.isValid(id);
+        if (!isValid) throw new HttpException('Local does not exist', 400);
+        const resent = await this.localhostsService.resendVerificationCode(id);
+        if (resent === 'Local does not exist') {
+            throw new HttpException('Local does not exist', 400);
+        } else if (resent === 'Code already verified') {
+            throw new HttpException('Code already verified', 400);
+        } else if (resent) {
+            return res.status(200).json(resent);
         } else {
             throw new HttpException('Internal server error', 500);
         }
