@@ -15,7 +15,9 @@ export class LocalhostsController {
         if (localhost === 'Email already exists') {
             throw new HttpException('Email already exists', 400);
         } else if (localhost) {
-            return res.status(201).json(localhost);
+            return res.status(201).json({
+                data: localhost
+            });
         } else {
             throw new HttpException('Internal server error', 500);
         }
@@ -35,7 +37,9 @@ export class LocalhostsController {
         } else if (verified === 'Verification code has expired') {
             throw new HttpException('Verification code has expired', 400);
         } else if (verified) {
-            return res.status(200).json(verified);
+            return res.status(200).json({
+                data: verified
+            });
         } else {
             throw new HttpException('Internal server error', 500);
         }
@@ -51,7 +55,9 @@ export class LocalhostsController {
         } else if (resent === 'Code already verified') {
             throw new HttpException('Code already verified', 400);
         } else if (resent) {
-            return res.status(200).json(resent);
+            return res.status(200).json({
+                data: resent
+            });
         } else {
             throw new HttpException('Internal server error', 500);
         }

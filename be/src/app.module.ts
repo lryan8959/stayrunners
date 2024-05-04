@@ -9,13 +9,22 @@ import { RedisModule } from './redis/redis.module';
 import { CountriesModule } from './countries/countries.module';
 import { LocalhostsModule } from './localhosts/localhosts.module';
 import { AuthModule } from './auth/auth.module';
+import { CustomersModule } from './customers/customers.module';
+import { BidsModule } from './bids/bids.module';
+import { RoomsModule } from './rooms/rooms.module';
 @Module({
   imports: [
     UserModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.development'],
     }), 
-    MongooseOmModule, CountriesModule, LocalhostsModule, AuthModule,
+    MongooseOmModule,
+    CountriesModule,
+    LocalhostsModule,
+    AuthModule,
+    CustomersModule,
+    BidsModule,
+    RoomsModule,
     
     // CacheRedisModule,
     // RedisModule, 
