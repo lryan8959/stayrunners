@@ -6,10 +6,14 @@ import { CreateLocalhostDto } from './dtos/CreateLocalhost.dto';
 import { VerifyLocalhostDto } from './dtos/VerifyLocalhost.dto';
 import { hashPassword } from 'src/utils/bcrypt';
 import { generatePassword } from 'src/utils/generatePassword';
+import { RoomRequests } from 'src/schemas/RoomRequests.schema';
 
 @Injectable()
 export class LocalhostsService {
-    constructor(@InjectModel(Localhost.name) private localhostModel: Model<Localhost>) {}
+    constructor(
+        @InjectModel(Localhost.name) private localhostModel: Model<Localhost>,
+        @InjectModel(RoomRequests.name) private roomRequestsModel: Model<RoomRequests>
+    ) {}
 
     async createLocalhost(createLocalhostDto: CreateLocalhostDto) {
         const email = createLocalhostDto.email;
@@ -84,5 +88,31 @@ export class LocalhostsService {
         localhost.verification_code_created_at = new Date();
         await localhost.save();
         return { _id: localhost._id, code_verified: false };
+    }
+
+    async acceptRoomRequest(id, localhost) {
+        const Isdealed = await this.roomRequestsModel.findOne({
+            bid: id,
+            dealed: true
+        }).exec();
+
+        if (Isdealed) {
+            return 'We Apologize, this Order is no Longer Available.';
+        }
+
+        const IsAvailable = await this.roomRequestsModel.findOne({
+            bid: id,
+            localhost: localhost,
+            accepted: false
+        }).exec();
+
+        if (!IsAvailable) {
+            return 'Request already accepted';
+        }
+
+        IsAvailable.accepted = true;
+        IsAvailable.accepted_at = new Date();
+        await IsAvailable.save();
+        return { bid: id, accepted: true };
     }
 }

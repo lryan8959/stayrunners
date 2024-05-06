@@ -1,9 +1,10 @@
-import { Body, Controller, Get, HttpException, Param, Patch, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Param, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { LocalhostsService } from './localhosts.service';
 import { CreateLocalhostDto } from './dtos/CreateLocalhost.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { VerifyLocalhostDto } from './dtos/VerifyLocalhost.dto';
 import mongoose from 'mongoose';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('localhosts')
 export class LocalhostsController {
@@ -57,6 +58,26 @@ export class LocalhostsController {
         } else if (resent) {
             return res.status(200).json({
                 data: resent
+            });
+        } else {
+            throw new HttpException('Internal server error', 500);
+        }
+    }
+
+    @Patch('/accept-room-request/:id')
+    @UseGuards(JwtAuthGuard)
+    async acceptRequest(@Req() req: Request, @Param('id') id: string, @Res() res: Response) {
+        const isValid = mongoose.Types.ObjectId.isValid(id);
+        if (!isValid) throw new HttpException('Request does not exist', 400);
+        const localhost: any = (req.user as any).id;
+        const accepted = await this.localhostsService.acceptRoomRequest(id, localhost);
+        if (accepted === 'We Apologize, this Order is no Longer Available.') {
+            throw new HttpException('Request does not exist', 400);
+        } else if (accepted === 'Request already accepted') {
+            throw new HttpException('Request already accepted', 400);
+        } else if (accepted) {
+            return res.status(200).json({
+                data: accepted
             });
         } else {
             throw new HttpException('Internal server error', 500);
