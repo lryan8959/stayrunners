@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { CustomersModule } from './customers/customers.module';
 import { BidsModule } from './bids/bids.module';
 import { RoomsModule } from './rooms/rooms.module';
+import { MulterModule } from '@nestjs/platform-express';
 @Module({
   imports: [
     UserModule,
@@ -25,7 +26,9 @@ import { RoomsModule } from './rooms/rooms.module';
     CustomersModule,
     BidsModule,
     RoomsModule,
-    
+    MulterModule.register({
+      dest: './uploads',
+    }),
     // CacheRedisModule,
     // RedisModule, 
   ],
