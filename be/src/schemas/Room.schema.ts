@@ -21,7 +21,7 @@ export class Room {
     payment_option: string;
 
     @Prop({ required: true })
-    min_Price_per_night: number;
+    min_price_per_night: number;
 
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'City' })
     city: City;

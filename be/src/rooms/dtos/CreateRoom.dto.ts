@@ -1,16 +1,9 @@
-import { Type } from "class-transformer";
-import { IsArray, IsNotEmpty, IsString, ValidateNested } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class CreateRoomDto {
-    @IsString()
-    @IsNotEmpty()
     localhost: string;
 
-    @IsArray()
-    @IsNotEmpty()
-    @ValidateNested({ each: true })
-    @Type(() => Object)
-    images: File[];
+    pic_url: string;
 
     @IsNotEmpty()
     @IsString()
@@ -20,10 +13,11 @@ export class CreateRoomDto {
     available: boolean;
 
     @IsNotEmpty()
-    paymentOptions: string[];
+    @IsString()
+    payment_option: string;
 
     @IsNotEmpty()
-    minPricePerNight: number;
+    min_price_per_night: number;
 
     @IsNotEmpty()
     @IsString()
