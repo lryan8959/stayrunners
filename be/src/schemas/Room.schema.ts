@@ -9,7 +9,7 @@ export class Room {
     localhost: Localhost;
 
     @Prop({ required: true })
-    picUrls: string[];
+    pic_url: string;
 
     @Prop({ required: true })
     description: string;
@@ -18,10 +18,10 @@ export class Room {
     available: boolean;
 
     @Prop({ required: true })
-    paymentOptions: string[];
+    payment_option: string;
 
     @Prop({ required: true })
-    minPricePerNight: number;
+    min_Price_per_night: number;
 
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'City' })
     city: City;
