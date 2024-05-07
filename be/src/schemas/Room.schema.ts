@@ -9,7 +9,7 @@ export class Room {
     localhost: Localhost;
 
     @Prop({ required: true })
-    pic_url: string;
+    pic_urls: string[];
 
     @Prop({ required: true })
     description: string;

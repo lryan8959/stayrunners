@@ -8,9 +8,9 @@ import { CreateRoomDto } from './dtos/CreateRoom.dto';
 export class RoomsService {
     constructor(@InjectModel(Room.name) private roomModel: Model<Room>) {}
 
-    async createRoom(id, filename, createRoomDto: CreateRoomDto) {
+    async createRoom(id, filenames, createRoomDto: CreateRoomDto) {
         createRoomDto.localhost = id;
-        createRoomDto.pic_url = filename;
+        createRoomDto.pic_urls = filenames;
 
         const newRoom = new this.roomModel(createRoomDto);
         return await newRoom.save();

@@ -1,8 +1,8 @@
-import { Body, Controller, HttpStatus, Post, Req, Res, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, HttpStatus, Post, Req, Res, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CreateRoomDto } from './dtos/CreateRoom.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { Request } from 'express';
-import { FileInterceptor, FilesInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import * as path from 'path';
 import { diskStorage } from 'multer';
 import { RoomsService } from './rooms.service';
@@ -13,10 +13,11 @@ export class RoomsController {
 
     @Post()
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(FileInterceptor('image', {
+    @UseInterceptors(FilesInterceptor('images', 10, {
         storage: diskStorage({
             destination: './uploads',
             filename: (req, file, cb) => {
+                console.log(file)
                 const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + '-' + Date.now();
                 const extension: string = path.parse(file.originalname).ext;
 
@@ -24,9 +25,18 @@ export class RoomsController {
             }
         })
     }))
-    async uploadFile(@Req() req: Request, @Body() createRoomDto: CreateRoomDto, @Res() res, @UploadedFile() file) {
+    async uploadFile(
+        @Req() req: Request,
+        @Body() createRoomDto: CreateRoomDto,
+        @UploadedFiles() files: Array<Express.Multer.File>,
+        @Res() res) {
+        if (!files || files.length === 0) {
+            throw new BadRequestException('At least one image is required');
+        }
+    
         const id: any = (req.user as any).id;
-        const room = await this.roomsService.createRoom(id, file.filename, createRoomDto);
+        const filenames = files.map(file => file.filename);
+        const room = await this.roomsService.createRoom(id, filenames, createRoomDto);
         if (room) {
             return res.status(HttpStatus.CREATED).json({
                 success: true,

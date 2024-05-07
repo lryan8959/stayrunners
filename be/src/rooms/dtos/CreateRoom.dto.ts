@@ -3,14 +3,11 @@ import { IsNotEmpty, IsString } from "class-validator";
 export class CreateRoomDto {
     localhost: string;
 
-    pic_url: string;
+    pic_urls: string[];
 
     @IsNotEmpty()
     @IsString()
     description: string;
-
-    @IsNotEmpty()
-    available: boolean;
 
     @IsNotEmpty()
     @IsString()
