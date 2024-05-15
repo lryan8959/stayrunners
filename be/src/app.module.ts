@@ -13,12 +13,14 @@ import { CustomersModule } from './customers/customers.module';
 import { BidsModule } from './bids/bids.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { MailerModule } from '@nestjs-modules/mailer';
+
 @Module({
   imports: [
     UserModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.development'],
-    }), 
+    }),
     MongooseOmModule,
     CountriesModule,
     LocalhostsModule,
@@ -29,8 +31,22 @@ import { MulterModule } from '@nestjs/platform-express';
     MulterModule.register({
       dest: './uploads',
     }),
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        secure: false, // Set to true if using TLS/SSL
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      },
+      defaults: {
+        from: process.env.SMTP_EMAIL, // Default sender email address
+      },
+    }),
     // CacheRedisModule,
-    // RedisModule, 
+    // RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

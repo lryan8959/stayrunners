@@ -5,19 +5,19 @@ import { Response } from 'express';
 
 @Controller('customers')
 export class CustomersController {
-    constructor(private customersService: CustomersService) {}
+  constructor(private customersService: CustomersService) {}
 
-    @Post('/create-bid')
-    async createBid(@Body() createBidDto: CreateBidDto, @Res() res: Response) {
-        const customer = await this.customersService.createBid(createBidDto);
-        if (customer === null) {
-            throw new HttpException('Invalid data', 400);
-        } else if (customer) {
-            return res.status(201).json({
-                data: customer
-            });
-        } else {
-            throw new HttpException('Internal server error', 500);
-        }
+  @Post('/create-bid')
+  async createBid(@Body() createBidDto: CreateBidDto, @Res() res: Response) {
+    const customer = await this.customersService.createBid(createBidDto);
+    if (customer === null) {
+      throw new HttpException('Invalid data', 400);
+    } else if (customer) {
+      return res.status(201).json({
+        data: customer,
+      });
+    } else {
+      throw new HttpException('Internal server error', 500);
     }
+  }
 }

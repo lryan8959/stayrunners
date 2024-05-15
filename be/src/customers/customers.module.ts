@@ -6,6 +6,7 @@ import { Customer, CustomerSchema } from 'src/schemas/Customer.schema';
 import { Bid, BidSchema } from 'src/schemas/Bid.schema';
 import { Localhost, LocalhostSchema } from 'src/schemas/Localhost.schema';
 import { RoomRequests, RoomRequestsSchema } from 'src/schemas/RoomRequests.schema';
+import { EmailService } from 'src/utils/EmailService';
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { RoomRequests, RoomRequestsSchema } from 'src/schemas/RoomRequests.schem
     ])
   ],
   controllers: [CustomersController],
-  providers: [CustomersService]
+  providers: [CustomersService, EmailService]
 })
 export class CustomersModule {}
