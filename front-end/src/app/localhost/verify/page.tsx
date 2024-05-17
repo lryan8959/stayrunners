@@ -53,28 +53,34 @@ const Page = () => {
               className="absolute z-10 inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white pointer-events-none"
             />
 
-            <div className="px-8 pb-12 pt-12">
+            <div className="px-8 pb-6 pt-12">
               <div className="flex justify-center">
                 <h2 className="tracking-tight font-semibold text-xl mb-6">
-                  Please enter verification code
+                  Last Minute Booking
                 </h2>
               </div>
 
               <div className="relative mt-4 h-full flex flex-col justify-between">
-                <div className="flex justify-center">
-                  <InputOTP maxLength={6}>
-                    <InputOTPGroup>
-                      <InputOTPSlot index={0} />
-                      <InputOTPSlot index={1} />
-                      <InputOTPSlot index={2} />
-                    </InputOTPGroup>
-                    <InputOTPSeparator />
-                    <InputOTPGroup>
-                      <InputOTPSlot index={3} />
-                      <InputOTPSlot index={4} />
-                      <InputOTPSlot index={5} />
-                    </InputOTPGroup>
-                  </InputOTP>
+                <div className="w-full flex justify-center">
+                  <div className="relative flex flex-col gap-1">
+                    <h3 className="font-bold pb-4">Check you inbox</h3>
+                    <p className="text-sm">Enter the code we just sent to</p>
+                    <p className="text-sm pb-6">shetty@gmail.com</p>
+                    <Label>Your verification code</Label>
+                    <InputOTP maxLength={6}>
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                      </InputOTPGroup>
+                      <InputOTPSeparator />
+                      <InputOTPGroup>
+                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </div>
                 </div>
               </div>
             </div>
@@ -103,8 +109,9 @@ const Page = () => {
                 </Link>
               </div>
             </div>
-            <div className="flex justify-center">
-              <p className="text-sm mt-2 text-blue-700 cursor-pointer underline">
+            <div className="flex justify-center mt-2">
+              <p className="text-sm mr-2">Didn't receive a code? </p>
+              <p className="text-sm text-blue-700 cursor-pointer underline">
                 Resend code
               </p>
             </div>
