@@ -2,9 +2,14 @@ import Link from "next/link";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { buttonVariants } from "./ui/button";
 import { ArrowRight } from "lucide-react";
+import { getToken } from "@/utils/storage";
 
 const Navbar = async () => {
-  const user = undefined;
+  let user = false;
+  const token = getToken();
+  if (token) {
+    user = true;
+  }
 
   const isAdmin = false;
 

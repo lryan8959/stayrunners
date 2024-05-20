@@ -1,44 +1,36 @@
 "use client";
 
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { toast } from "react-toastify";
+import { Copy } from "lucide-react";
+import { CopyCheck } from "lucide-react";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  getUserDataFromLocalStorage,
+  setUserDataInLocalStorage,
+} from "../../../utils/storage";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { ArrowRight, Check, Star, ChevronsUpDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { FINISHES, MODELS, MATERIALS } from "@/validators/option-validator";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
 
 const Page = () => {
-  const { toast } = useToast();
+  const userData = getUserDataFromLocalStorage();
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const router = useRouter();
+  const [passwordCopied, setPasswordCopied] = useState(false);
 
-  const [options, setOptions] = useState<{
-    model: (typeof MODELS.options)[number];
-    material: (typeof MATERIALS.options)[number];
-    finish: (typeof FINISHES.options)[number];
-  }>({
-    model: MODELS.options[0],
-    material: MATERIALS.options[0],
-    finish: FINISHES.options[0],
-  });
+  const handleCopy = (password: string) => {
+    navigator.clipboard
+      .writeText(password)
+      .then(() => {
+        setPasswordCopied(true);
+        toast.success("Password copied to clipboard! Please save it securely.");
+      })
+      .catch(() => {
+        toast.error("Failed to copy the password.");
+      });
+  };
 
   const [isPending, startTransition] = useTransition();
 
@@ -62,15 +54,36 @@ const Page = () => {
               <div className="relative mt-4 h-full flex flex-col justify-between">
                 <div className="border rounded-md p-4 mb-6">
                   <h3 className="text-sm font-bold">Name</h3>
-                  <p className="text-sm text-gray-500">Suniel Shetty</p>
+                  <p className="text-sm text-gray-500">{userData?.name}</p>
                 </div>
                 <div className="border rounded-md p-4 mb-6">
                   <h3 className="text-sm font-bold">Email</h3>
-                  <p className="text-sm text-gray-500">shetty33@gmail.com</p>
+                  <p className="text-sm text-gray-500">{userData?.email}</p>
                 </div>
                 <div className="border rounded-md p-4">
                   <h3 className="text-sm font-bold">Password</h3>
-                  <p className="text-sm text-gray-500">abc@123</p>
+                  <div className="flex text-gray-500 items-center">
+                    <p className="text-sm mr-4">{userData?.password} </p>
+                    {userData?.password && (
+                      <button
+                        style={{ fontSize: "5px" }}
+                        onClick={() => handleCopy(userData?.password || "")}
+                      >
+                        {passwordCopied ? (
+                          <CopyCheck
+                            style={{
+                              border: "1px solid hsl(142.1 76.2% 36.3%)",
+                              padding: "2px",
+                              borderRadius: "2px",
+                            }}
+                            size={20}
+                          />
+                        ) : (
+                          <Copy size={18} />
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -88,7 +101,9 @@ const Page = () => {
               )}
             </p> */}
                 <p className="text-sm text-gray-500">Login to Upload Picture</p>
-                <p className="text-sm text-gray-500 mb-6">Description of the Room</p>
+                <p className="text-sm text-gray-500 mb-6">
+                  Description of the Room
+                </p>
                 <Button
                   disabled={isPending}
                   onClick={() => console.log("click")}

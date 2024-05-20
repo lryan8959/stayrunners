@@ -14,32 +14,32 @@ export const COLORS = [
   { label: "Rose", value: "rose", tw: "rose-950" },
 ] as const;
 
-export const MODELS = {
-  name: "models",
+export const CITIES = {
+  name: "cities",
   options: [
     {
       label: "New York",
-      value: "iphonex",
+      value: "66339c6df634f963321faaa5",
     },
     {
       label: "Los Angeles",
-      value: "iphone11",
+      value: "66339c6df634f963321faaa6",
     },
     {
       label: "California",
-      value: "iphone12",
+      value: "66339c6df634f963321faaa7",
     },
     {
       label: "Chicago",
-      value: "iphone13",
+      value: "66339c6df634f963321faaa8",
     },
     {
       label: "Toronto",
-      value: "iphone14",
+      value: "66339c6df634f963321faaa9",
     },
     {
       label: "Sibi",
-      value: "iphone15",
+      value: "66339c6df634f963321faaa0",
     },
   ],
 } as const;

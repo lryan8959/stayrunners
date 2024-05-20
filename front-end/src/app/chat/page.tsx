@@ -17,8 +17,9 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { ArrowRight, Check, Star, ChevronsUpDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { FINISHES, MODELS, MATERIALS } from "@/validators/option-validator";
+import { FINISHES, CITIES, MATERIALS } from "@/validators/option-validator";
 import Chat from "@/components/Chat";
+import TestChat from "@/components/TestChat";
 
 const Page = () => {
   const { toast } = useToast();
@@ -30,6 +31,7 @@ const Page = () => {
     <MaxWidthWrapper>
       <div className="w-full flex justify-center py-4">
         <Chat />
+        <TestChat />
       </div>
     </MaxWidthWrapper>
   );

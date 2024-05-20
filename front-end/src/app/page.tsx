@@ -18,15 +18,15 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { ArrowRight, Check, Star, ChevronsUpDown } from "lucide-react";
 import Link from "next/link";
 import { BASE_PRICE } from "@/config/products";
-import { FINISHES, MODELS, MATERIALS } from "@/validators/option-validator";
+import { FINISHES, CITIES, MATERIALS } from "@/validators/option-validator";
 
 export default function Home() {
   const [options, setOptions] = useState<{
-    model: (typeof MODELS.options)[number];
+    city: (typeof CITIES.options)[number];
     material: (typeof MATERIALS.options)[number];
     finish: (typeof FINISHES.options)[number];
   }>({
-    model: MODELS.options[0],
+    city: CITIES.options[0],
     material: MATERIALS.options[0],
     finish: FINISHES.options[0],
   });
@@ -125,34 +125,34 @@ export default function Home() {
                                 role="combobox"
                                 className="w-full justify-between"
                               >
-                                {options.model.label}
+                                {options.city.label}
                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                              {MODELS.options.map((model) => (
+                              {CITIES.options.map((city) => (
                                 <DropdownMenuItem
-                                  key={model.label}
+                                  key={city.label}
                                   className={cn(
                                     "flex text-sm gap-1 items-center p-1.5 cursor-default hover:bg-zinc-100",
                                     {
                                       "bg-zinc-100":
-                                        model.label === options.model.label,
+                                        city.label === options.city.label,
                                     }
                                   )}
                                   onClick={() => {
-                                    setOptions((prev) => ({ ...prev, model }));
+                                    setOptions((prev) => ({ ...prev, city }));
                                   }}
                                 >
                                   <Check
                                     className={cn(
                                       "mr-2 h-4 w-4",
-                                      model.label === options.model.label
+                                      city.label === options.city.label
                                         ? "opacity-100"
                                         : "opacity-0"
                                     )}
                                   />
-                                  {model.label}
+                                  {city.label}
                                 </DropdownMenuItem>
                               ))}
                             </DropdownMenuContent>

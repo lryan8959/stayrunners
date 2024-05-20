@@ -1,23 +1,17 @@
 "use client";
 
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
+import { toast } from "react-toastify";
+import axios from "axios";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { ArrowRight, Check, Star, ChevronsUpDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { FINISHES, MODELS, MATERIALS } from "@/validators/option-validator";
+import { useState, useTransition, useEffect } from "react";
+import {
+  getUserDataFromLocalStorage,
+  setUserDataInLocalStorage,
+} from "../../../utils/storage";
 import {
   InputOTP,
   InputOTPGroup,
@@ -26,22 +20,76 @@ import {
 } from "@/components/ui/input-otp";
 
 const Page = () => {
-  const { toast } = useToast();
-  const [isDragOver, setIsDragOver] = useState<boolean>(false);
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const userData = getUserDataFromLocalStorage();
+  const [seconds, setSeconds] = useState(60);
   const router = useRouter();
-
-  const [options, setOptions] = useState<{
-    model: (typeof MODELS.options)[number];
-    material: (typeof MATERIALS.options)[number];
-    finish: (typeof FINISHES.options)[number];
-  }>({
-    model: MODELS.options[0],
-    material: MATERIALS.options[0],
-    finish: FINISHES.options[0],
-  });
+  const [verificationCode, setVerificationCode] = useState("");
 
   const [isPending, startTransition] = useTransition();
+
+  const handleResendCode = async () => {
+    try {
+      setSeconds(60);
+      const res = await axios.patch(
+        `http://194.163.45.154:3120/localhosts/resend-verification-code/${userData?.id}`
+      );
+
+      if (res.status === 200) {
+        toast.success("Verification code has been sent to you email");
+      } else {
+        toast.error("Something went wrong");
+      }
+    } catch (err: any) {
+      const errMsg = Array.isArray(err.response.data.message)
+        ? err.response.data.message[0]
+        : err.response.data.message;
+      toast.error(errMsg);
+    }
+  };
+
+  const handleClick = async () => {
+    if (verificationCode?.length !== 6) {
+      toast.error("Please enter a valid verification code");
+    } else {
+      try {
+        const res = await axios.patch(
+          `http://194.163.45.154:3120/localhosts/verify/${userData?.id}`,
+          {
+            verification_code: parseInt(verificationCode, 10),
+          }
+        );
+
+        if (res.status === 200) {
+          setUserDataInLocalStorage({
+            name: userData?.name || "",
+            email: userData?.email || "",
+            city: userData?.city || "",
+            id: res?.data?.data?._id,
+            code_verified: res?.data?.data?.code_verified,
+            password: res?.data?.data?.password,
+          });
+
+          startTransition(() => {
+            router.push("/localhost/welcome");
+          });
+        }
+
+        toast.error("Something went wrong");
+      } catch (err: any) {
+        const errMsg = Array.isArray(err.response.data.message)
+          ? err.response.data.message[0]
+          : err.response.data.message;
+        toast.error(errMsg);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (seconds > 0) {
+      const timer = setTimeout(() => setSeconds(seconds - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [seconds]);
 
   return (
     <MaxWidthWrapper>
@@ -67,7 +115,10 @@ const Page = () => {
                     <p className="text-sm">Enter the code we just sent to</p>
                     <p className="text-sm pb-6">shetty@gmail.com</p>
                     <Label>Your verification code</Label>
-                    <InputOTP maxLength={6}>
+                    <InputOTP
+                      maxLength={6}
+                      onChange={(value) => setVerificationCode(value)}
+                    >
                       <InputOTPGroup>
                         <InputOTPSlot index={0} />
                         <InputOTPSlot index={1} />
@@ -81,6 +132,13 @@ const Page = () => {
                       </InputOTPGroup>
                     </InputOTP>
                   </div>
+                </div>
+                <div className="flex justify-center mt-4">
+                  {seconds > 0 ? (
+                    <p>Time remaining: {seconds} seconds</p>
+                  ) : (
+                    <p className="text-red-600">Verification code expired</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -97,23 +155,41 @@ const Page = () => {
                   100
               )}
             </p> */}
-                <Link href="/localhost/welcome">
+                {seconds < 1 ? (
                   <Button
                     disabled={isPending}
-                    onClick={() => console.log("click")}
+                    onClick={handleResendCode}
+                    size="sm"
+                    className="text-sm"
+                  >
+                    Resend code
+                  </Button>
+                ) : (
+                  <Button
+                    disabled={isPending}
+                    onClick={handleClick}
                     size="sm"
                     className="text-sm"
                   >
                     Submit
                   </Button>
-                </Link>
+                )}
               </div>
             </div>
             <div className="flex justify-center mt-2">
               <p className="text-sm mr-2">Did not receive a code?</p>
-              <p className="text-sm text-blue-700 cursor-pointer underline">
-                Resend code
-              </p>
+              {seconds < 1 ? (
+                <p
+                  onClick={handleResendCode}
+                  className="text-sm text-blue-700 cursor-pointer underline"
+                >
+                  Resend code
+                </p>
+              ) : (
+                <p className="text-sm text-gray-500 cursor-not-allowed">
+                  Resend code
+                </p>
+              )}
             </div>
           </div>
         </div>

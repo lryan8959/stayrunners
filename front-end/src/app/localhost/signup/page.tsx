@@ -1,11 +1,11 @@
 "use client";
 
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "react-toastify";
 import { cn } from "@/lib/utils";
+import axios, { AxiosResponse } from "axios";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,28 +14,118 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { ArrowRight, Check, Star, ChevronsUpDown } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Star,
+  ChevronsUpDown,
+  ClipboardType,
+} from "lucide-react";
+import { isValidName, isValidEmail } from "../../../utils/validation";
+import { setUserDataInLocalStorage } from "../../../utils/storage";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { FINISHES, MODELS, MATERIALS } from "@/validators/option-validator";
+import { FINISHES, CITIES, MATERIALS } from "@/validators/option-validator";
 
 const Page = () => {
-  const { toast } = useToast();
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const router = useRouter();
+  const [localhost, setLocalHost] = useState({
+    name: "",
+    email: "",
+    city: "",
+  });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    city: "",
+  });
 
   const [options, setOptions] = useState<{
-    model: (typeof MODELS.options)[number];
+    city: (typeof CITIES.options)[number];
     material: (typeof MATERIALS.options)[number];
     finish: (typeof FINISHES.options)[number];
   }>({
-    model: MODELS.options[0],
+    city: CITIES.options[0],
     material: MATERIALS.options[0],
     finish: FINISHES.options[0],
   });
 
   const [isPending, startTransition] = useTransition();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLocalHost({ ...localhost, [name]: value });
+  };
+
+  const handleClick = async () => {
+    setLocalHost({ ...localhost, city: options.city.value });
+    setErrors({
+      name: "",
+      email: "",
+      city: "",
+    });
+
+    let hasError = false;
+
+    if (!isValidName(localhost?.name)) {
+      toast.error("Please enter a valid name");
+      setErrors({
+        ...errors,
+        name: "Please enter a valid name",
+      });
+      hasError = true;
+    } else if (!isValidEmail(localhost?.email)) {
+      toast.error("Please enter a valid email");
+      setErrors({
+        ...errors,
+        email: "Please enter a valid email",
+      });
+      hasError = true;
+    } else if (
+      localhost?.city === "" ||
+      localhost?.city === undefined ||
+      localhost?.city === null
+    ) {
+      toast.error("Please select a valid city");
+      setErrors({
+        ...errors,
+        city: "Please select a valid city",
+      });
+      hasError = true;
+    } else {
+      try {
+        const res: AxiosResponse = await axios.post(
+          "http://194.163.45.154:3120/localhosts",
+          localhost
+        );
+        if (res.status === 201) {
+          const userData = {
+            name: localhost?.name,
+            email: localhost?.email,
+            city: localhost?.city,
+            id: res?.data?.data?._id,
+            code_verified: res?.data?.data?.code_verified,
+            password: "",
+          };
+          setUserDataInLocalStorage(userData);
+          if (!res?.data?.code_verified) {
+            router.push("/localhost/verify");
+          } else {
+            toast.success("You are already verified");
+            router.push("/login");
+          }
+        }
+      } catch (err: any) {
+        const errMsg = Array.isArray(err.response.data.message)
+          ? err.response.data.message[0]
+          : err.response.data.message;
+        toast.error(errMsg);
+      }
+    }
+  };
 
   return (
     <MaxWidthWrapper>
@@ -57,13 +147,39 @@ const Page = () => {
               <div className="relative mt-4 h-full flex flex-col justify-between">
                 <div className="flex flex-col gap-6">
                   <div className="relative flex flex-col gap-1 w-full">
-                    <Label>Name</Label>
-                    <Input />
+                    <Label className={`${errors?.name && "text-red-600"}`}>
+                      Name
+                    </Label>
+                    <Input
+                      name="name"
+                      className={`${errors?.name && "border-red-600"}`}
+                      type="text"
+                      value={localhost?.name}
+                      onChange={handleChange}
+                    />
+                    {errors?.name && (
+                      <p className="text-red-600 text-xs italic">
+                        {errors?.name}
+                      </p>
+                    )}
                   </div>
 
                   <div className="relative flex flex-col gap-1 w-full">
-                    <Label>Email</Label>
-                    <Input />
+                    <Label className={`${errors?.email && "text-red-600"}`}>
+                      Email
+                    </Label>
+                    <Input
+                      name="email"
+                      className={`${errors?.email && "text-red-600"}`}
+                      type="email"
+                      value={localhost?.email}
+                      onChange={handleChange}
+                    />
+                    {errors?.email && (
+                      <p className="text-red-600 text-xs italic">
+                        {errors?.email}
+                      </p>
+                    )}
                   </div>
 
                   <div className="relative flex flex-col gap-1 w-full">
@@ -75,34 +191,34 @@ const Page = () => {
                           role="combobox"
                           className="w-full justify-between"
                         >
-                          {options.model.label}
+                          {options.city.label}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        {MODELS.options.map((model) => (
+                        {CITIES.options.map((city) => (
                           <DropdownMenuItem
-                            key={model.label}
+                            key={city.label}
                             className={cn(
                               "flex text-sm gap-1 items-center p-1.5 cursor-default hover:bg-zinc-100",
                               {
                                 "bg-zinc-100":
-                                  model.label === options.model.label,
+                                  city.label === options.city.label,
                               }
                             )}
                             onClick={() => {
-                              setOptions((prev) => ({ ...prev, model }));
+                              setOptions((prev) => ({ ...prev, city }));
                             }}
                           >
                             <Check
                               className={cn(
                                 "mr-2 h-4 w-4",
-                                model.label === options.model.label
+                                city.label === options.city.label
                                   ? "opacity-100"
                                   : "opacity-0"
                               )}
                             />
-                            {model.label}
+                            {city.label}
                           </DropdownMenuItem>
                         ))}
                       </DropdownMenuContent>
@@ -124,16 +240,15 @@ const Page = () => {
                   100
               )}
             </p> */}
-                <Link href="/localhost/verify">
-                  <Button
-                    disabled={isPending}
-                    onClick={() => console.log("click")}
-                    size="sm"
-                    className="text-sm"
-                  >
-                    Submit for Verification Email
-                  </Button>
-                </Link>
+
+                <Button
+                  disabled={isPending}
+                  onClick={handleClick}
+                  size="sm"
+                  className="text-sm"
+                >
+                  Submit for Verification Email
+                </Button>
               </div>
             </div>
             <div className="flex justify-center">
