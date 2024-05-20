@@ -6,7 +6,8 @@
     "dev": "next dev -p 3003",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "preview": "next start"
   },
   "dependencies": {
     "@headlessui/react": "^2.0.3",
@@ -25,12 +26,14 @@
     "input-otp": "^1.2.4",
     "lucide-react": "^0.378.0",
     "next": "14.2.3",
+    "pnpm": "^9.1.1",
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
     "react-textarea-autosize": "^8.5.3",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20",

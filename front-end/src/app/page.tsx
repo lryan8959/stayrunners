@@ -3,8 +3,6 @@
 import React, { useState } from "react";
 import { Icons } from "@/components/Icons";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import Phone from "@/components/Phone";
-import { Reviews } from "@/components/Reviews";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn, formatPrice } from "@/lib/utils";
 import { RadioGroup } from "@headlessui/react";

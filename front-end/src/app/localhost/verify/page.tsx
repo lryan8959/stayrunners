@@ -110,7 +110,7 @@ const Page = () => {
               </div>
             </div>
             <div className="flex justify-center mt-2">
-              <p className="text-sm mr-2">Didn't receive a code? </p>
+              <p className="text-sm mr-2">Did not receive a code?</p>
               <p className="text-sm text-blue-700 cursor-pointer underline">
                 Resend code
               </p>
