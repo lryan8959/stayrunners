@@ -10,6 +10,12 @@ async function bootstrap() {
     path: '.env',
   });
 
+  app.enableCors({
+    origin: '*', // Allow requests from your Next.js frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
     origin: '*', // Allow requests from your Next.js frontend

@@ -17,13 +17,13 @@ export class Bid {
   nights: number;
 
   @Prop({ required: true })
-  priceWillingToPay: number;
+  price_willing_to_pay: number;
 
   @Prop()
-  specialInstructions: string;
+  special_instructions: string;
 
   @Prop({ enum: ['active', 'pending', 'cancelled', 'completed'], default: 'active' })
-  bidStatus: string;
+  bid_status: string;
 
   @Prop({ default: Date.now })
   created_at: Date;

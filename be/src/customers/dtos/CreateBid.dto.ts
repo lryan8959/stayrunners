@@ -17,22 +17,18 @@ export class CreateBidDto {
     city: string;
 
     @IsNotEmpty()
-    @IsNumber()
     beds: number;
 
     @IsNotEmpty()
-    @IsNumber()
     people: number;
 
     @IsNotEmpty()
-    @IsNumber()
     nights: number;
 
     @IsNotEmpty()
-    @IsNumber()
-    priceWillingToPay: number;
+    price_willing_to_pay: number;
 
     @IsNotEmpty()
     @IsString()
-    specialInstructions: string;
+    special_instructions: string;
 }

@@ -41,15 +41,15 @@ export class CustomersService {
       CustomerName = customer.name;
     }
 
-    const { beds, people, nights, priceWillingToPay, specialInstructions } =
+    const { beds, people, nights, price_willing_to_pay, special_instructions } =
       createBidDto;
     const createdBid = new this.bidModel({
       customer: _id,
       beds,
       people,
       nights,
-      priceWillingToPay,
-      specialInstructions,
+      price_willing_to_pay,
+      special_instructions,
     });
     const savedBid = await createdBid.save();
 
@@ -91,7 +91,7 @@ export class CustomersService {
                         <li><strong>Beds:</strong> ${beds}</li>
                         <li><strong>People:</strong> ${people}</li>
                         <li><strong>Nights:</strong> ${nights}</li>
-                        <li><strong>Special Instructions:</strong> ${specialInstructions}</li>
+                        <li><strong>Special Instructions:</strong> ${special_instructions}</li>
                     </ul>
                     <a href="{{negotiateUrl}}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none;">Negotiate Room Stay</a>
                     <p>If you have any questions or concerns, please contact us.</p>
