@@ -9,7 +9,7 @@ import { saveToken } from "../../utils/storage";
 import axios, { AxiosResponse } from "axios";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { ArrowRight, Check, Star, ChevronsUpDown } from "lucide-react";
+import { ArrowRight, Check, Star, ChevronsUpDown, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { CornerDownLeft, Loader2 } from "lucide-react";
