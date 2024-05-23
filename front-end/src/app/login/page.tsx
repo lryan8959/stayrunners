@@ -9,9 +9,10 @@ import { saveToken } from "../../utils/storage";
 import axios, { AxiosResponse } from "axios";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { ArrowRight, Check, Star, ChevronsUpDown } from "lucide-react";
+import { ArrowRight, Check, Star, ChevronsUpDown, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { CornerDownLeft, Loader2 } from "lucide-react";
 
 const Page = () => {
   const router = useRouter();
@@ -27,6 +28,8 @@ const Page = () => {
   });
 
   const [isPending, startTransition] = useTransition();
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,6 +51,7 @@ const Page = () => {
         email: "Please enter a valid email",
       });
       hasError = true;
+      
     } else if (localhost?.password === "") {
       toast.error("Please enter your password");
       setErrors({
@@ -55,8 +59,10 @@ const Page = () => {
         password: "Please enter your password",
       });
       hasError = true;
+      
     } else {
       try {
+        setLoading(true);
         const res: AxiosResponse = await axios.post(
           "http://194.163.45.154:3120/auth/login",
           {
@@ -64,6 +70,10 @@ const Page = () => {
             password: localhost.password,
           }
         );
+      
+        if (res) {
+          setLoading(false);
+        }
         if (res.status === 200) {
           if (res?.data?.token) {
             saveToken(res?.data?.token);
@@ -71,6 +81,7 @@ const Page = () => {
           }
         }
       } catch (err: any) {
+        setLoading(false);
         const errMsg = Array.isArray(err.response.data.message)
           ? err.response.data.message[0]
           : err.response.data.message;
@@ -150,13 +161,19 @@ const Page = () => {
               )}
             </p> */}
                 <Button
-                  disabled={isPending}
+                  disabled={loading}
                   onClick={handleClick}
                   size="sm"
                   className="text-sm px-10"
                 >
-                  Login
+                  {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : "Login"}
+                  {/* <Loader2 className="w-3 h-3 animate-spin" /> */}
+
+
                 </Button>
+
+
+
               </div>
             </div>
             <div className="flex justify-center items-center py-2">

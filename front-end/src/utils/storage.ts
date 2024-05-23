@@ -1,9 +1,15 @@
+
+
 // utils/storage.ts
 export const setIdInLocalStorage = (id: string) => {
   if (typeof window !== "undefined") {
     localStorage.setItem("userId", id);
   }
 };
+
+
+
+
 
 export const getIdFromLocalStorage = (): string | null => {
   if (typeof window !== "undefined") {
@@ -47,10 +53,34 @@ export const saveToken = (token: string) => {
   }
 };
 
-export const getToken = () => {
+// export  const getToken = () => {
+//   //const token = localStorage.getItem("jwtToken");
+//   //console.log("ttoiiiikkken",token);
+//   //console.log("window", window);
+//   //return token;
+
+// };
+// export const getTokenLogout = () => {
+
+//   const [token, setToken] = useState(localStorage.getItem("jwtToken"));
+// console.log("get Token form LS",token);
+
+export const getTokenn = (): string | null => {
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("jwtToken");
-    return token !== null;
+    return localStorage.getItem("jwtToken");
   }
   return null;
 };
+
+//   const LogoutUser = () => {
+//    setToken("");
+//   return localStorage.removeItem("jwtToken")
+
+//   };
+
+// };
+
+export const LogoutUser = () => {
+  return localStorage.removeItem("jwtToken")
+};
+

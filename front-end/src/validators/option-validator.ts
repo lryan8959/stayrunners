@@ -44,6 +44,20 @@ export const CITIES = {
   ],
 } as const;
 
+export const PAYMENT_OPTIONS = {
+  name: "payment_options",
+  options: [
+    {
+      label: "Cash",
+      value: "66339c6df634f963321faab5",
+    },
+    {
+      label: "Credit Card",
+      value: "66339c6df634f963321faac6",
+    },
+  ],
+} as const;
+
 export const MATERIALS = {
   name: "material",
   options: [

@@ -1,15 +1,41 @@
+"use client";
 import Link from "next/link";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { buttonVariants } from "./ui/button";
 import { ArrowRight } from "lucide-react";
-import { getToken } from "@/utils/storage";
+import { getTokenn } from "@/utils/storage";
+import { useRouter } from "next/navigation";
 
-const Navbar = async () => {
-  let user = false;
-  const token = getToken();
-  if (token) {
-    user = true;
+const  Navbar = async () => {
+  const router = useRouter();
+  let IsUser;
+  //console.log("win",window);
+  const ttoken = getTokenn();
+  console.log("get token from Storage: ", ttoken);
+  
+ // const ttoken = null || undefined;
+//const ttoken ="shauguajsckajhiubdkjsdjbc";
+ // console.log("token get from Local storage",ttoken);
+  if(ttoken){
+    IsUser = true;
+    router.push("/localhost/home");
   }
+  else{
+    IsUser = false;
+
+  }
+  //console.log("Is user in navbar ",IsUser);
+  
+  // const token = localStorage.getItem("jwtToken");
+  // console.log("tokeen",token);
+  
+  // if (!token) {
+  //   user = false;
+  // }
+  // else{
+  //   user =true;
+  // }
+//console.log("user t/f",user);
 
   const isAdmin = false;
 
@@ -22,18 +48,19 @@ const Navbar = async () => {
           </Link>
 
           <div className="h-full flex items-center space-x-4">
-            {user ? (
+            {IsUser ? (
               <>
                 <Link
-                  href="/api/auth/logout"
+                  href="/logout"
                   className={buttonVariants({
-                    size: "sm",
+                    size: "lg",
                     variant: "ghost",
+                    className: "font-bold ",
                   })}
                 >
-                  Sign out
+                  Logout
                 </Link>
-                {isAdmin ? (
+                {/* {isAdmin ? (
                   <Link
                     href="/dashboard"
                     className={buttonVariants({
@@ -43,8 +70,8 @@ const Navbar = async () => {
                   >
                     Dashboard ✨
                   </Link>
-                ) : null}
-                <Link
+                ) : null} */}
+                {/* <Link
                   href="/configure/upload"
                   className={buttonVariants({
                     size: "sm",
@@ -53,10 +80,11 @@ const Navbar = async () => {
                 >
                   Become a local host
                   <ArrowRight className="ml-1.5 h-5 w-5" />
-                </Link>
+                </Link> */}
               </>
             ) : (
               <>
+
                 <Link
                   href="/login"
                   className={buttonVariants({
@@ -67,6 +95,7 @@ const Navbar = async () => {
                 >
                   Login
                 </Link>
+
 
                 <div className="h-8 w-px bg-zinc-200 hidden sm:block" />
 
