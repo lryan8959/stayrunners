@@ -1,15 +1,38 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 
 export class CreateCountryDto {
-    @IsString()
-    @IsNotEmpty()
-    country_name: string;
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
-    @IsString()
-    @IsNotEmpty()
-    currency: string;
+  @IsString()
+  @IsNotEmpty()
+  code: string;
 
-    @IsString()
-    @IsNotEmpty()
-    language: string;
+  @IsString()
+  @IsNotEmpty()
+  capital: string;
+
+  @IsString()
+  @IsNotEmpty()
+  region: string;
+
+  @IsObject()
+  @IsNotEmpty()
+  currency: {
+    code: string;
+    name: string;
+    symbol: string;
+  };
+
+  @IsObject()
+  @IsNotEmpty()
+  language: {
+    code: string;
+    name: string;
+  };
+
+  @IsString()
+  @IsNotEmpty()
+  flag: string;
 }
