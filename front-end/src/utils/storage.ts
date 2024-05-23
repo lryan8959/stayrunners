@@ -81,6 +81,8 @@ export const getTokenn = (): string | null => {
 // };
 
 export const LogoutUser = () => {
+
+
   return localStorage.removeItem("jwtToken")
 };
 

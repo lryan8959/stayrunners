@@ -4,38 +4,81 @@ import MaxWidthWrapper from "./MaxWidthWrapper";
 import { buttonVariants } from "./ui/button";
 import { ArrowRight } from "lucide-react";
 import { getTokenn } from "@/utils/storage";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
-const  Navbar = async () => {
+const Navbar = () => {
+  const [isUpdate, setIsUpdate] = useState(false);
+
+
   const router = useRouter();
-  let IsUser;
-  //console.log("win",window);
-  const ttoken = getTokenn();
-  console.log("get token from Storage: ", ttoken);
+  const pathname = usePathname();
   
- // const ttoken = null || undefined;
-//const ttoken ="shauguajsckajhiubdkjsdjbc";
- // console.log("token get from Local storage",ttoken);
-  if(ttoken){
+
+
+  let IsUser = false;
+  let token = null;
+  
+  // Check if localStorage is available
+  if (typeof localStorage !== "undefined") {
+    // If available, retrieve the token
+    token = localStorage.getItem("jwtToken");
+    console.log("Token retrieved from localStorage:", token);
+  }
+  
+  if (token) {
     IsUser = true;
+    // Assuming router is properly defined and imported
     router.push("/localhost/home");
   }
-  else{
-    IsUser = false;
+  
+  // Optionally, handle the case where the token is not present or router redirection fails
+  // if (!IsUser) {
+  //   console.log("User is not authenticated or token is missing.");
+  //   // Optionally, you might want to redirect to a login page or display an error message
+  // }
+  
 
-  }
-  //console.log("Is user in navbar ",IsUser);
+
+
+
+
+  // let IsUser;
+
+  // // const token = localStorage.getItem("jwtToken") ? localStorage.getItem("jwtToken") : null;
   
   // const token = localStorage.getItem("jwtToken");
+  // //console.log("win",window);
+
+  // console.log("get token from Storage-- usestate: ", token);
+
+  // // const ttoken = null || undefined;
+  // //const ttoken ="shauguajsckajhiubdkjsdjbc";
+  // // console.log("token get from Local storage",ttoken);
+  // if (token) {
+  //   IsUser = true;
+  //   router.push("/localhost/home");
+  // }
+  // else {
+  //   IsUser = false;
+
+  // }
+
+  useEffect(() => {
+    setIsUpdate(!isUpdate)
+  }, [pathname])
+  //console.log("Is user in navbar ",IsUser);
+
+  // const token = localStorage.getItem("jwtToken");
   // console.log("tokeen",token);
-  
+
   // if (!token) {
   //   user = false;
   // }
   // else{
   //   user =true;
   // }
-//console.log("user t/f",user);
+  //console.log("user t/f",user);
 
   const isAdmin = false;
 

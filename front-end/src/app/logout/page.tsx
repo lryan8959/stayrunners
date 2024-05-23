@@ -7,9 +7,8 @@ import { LogoutUser } from "../../utils/storage";
 function Logout() {
     const router = useRouter();
 
-    useEffect(() => {
-        LogoutUser();
-    }, [LogoutUser])
+    if (localStorage.getItem("jwtToken"))
+        localStorage.removeItem("jwtToken");
 
 
     return router.push("/login")
