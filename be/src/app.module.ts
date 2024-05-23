@@ -14,6 +14,7 @@ import { BidsModule } from './bids/bids.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [
@@ -49,6 +50,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
     // RedisModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}

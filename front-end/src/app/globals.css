@@ -91,3 +91,73 @@
 .scrollbar-thumb-rounded::-webkit-scrollbar-thumb {
   border-radius: 0.25rem;
 }
+
+/* Base styles for the card container and cards */
+.card-container {
+  display: grid;
+  gap: 1rem; /* Adjust the gap between cards as needed */
+}
+
+.image-container {
+  display: grid;
+  gap: 1rem; /* Adjust the gap between cards as needed */
+}
+
+/* Responsive grid layout */
+
+/* Extra small devices (0-575px) */
+@media (max-width: 575.98px) {
+  .card-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .image-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Small devices (576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .card-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .image-container {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* Medium devices (768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .card-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .image-container {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* Large devices (992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .card-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .image-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Extra large devices (1200px and up) */
+@media (min-width: 1200px) {
+  .card-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .image-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.image-preview img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-right: 0.5rem;
+}
