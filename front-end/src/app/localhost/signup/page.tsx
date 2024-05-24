@@ -13,23 +13,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  ArrowRight,
-  Check,
-  Star,
-  ChevronsUpDown,
-  ClipboardType,
-} from "lucide-react";
-import { isValidName, isValidEmail } from "../../../utils/validation";
+import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
+import { isValidName, isValidEmail, isEmpty } from "../../../utils/validation";
 import { setUserDataInLocalStorage } from "../../../utils/storage";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { FINISHES, CITIES, MATERIALS } from "@/validators/option-validator";
+import { useState, useEffect } from "react";
+
+interface City {
+  _id: string;
+  city_name: string;
+}
 
 const Page = () => {
-  const [isDragOver, setIsDragOver] = useState<boolean>(false);
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
   const router = useRouter();
   const [localhost, setLocalHost] = useState({
     name: "",
@@ -43,17 +39,9 @@ const Page = () => {
     city: "",
   });
 
-  const [options, setOptions] = useState<{
-    city: (typeof CITIES.options)[number];
-    material: (typeof MATERIALS.options)[number];
-    finish: (typeof FINISHES.options)[number];
-  }>({
-    city: CITIES.options[0],
-    material: MATERIALS.options[0],
-    finish: FINISHES.options[0],
-  });
+  const [cities, setCities] = useState<City[]>([]);
 
-  const [isPending, startTransition] = useTransition();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -61,7 +49,6 @@ const Page = () => {
   };
 
   const handleClick = async () => {
-    setLocalHost({ ...localhost, city: options.city.value });
     setErrors({
       name: "",
       email: "",
@@ -84,11 +71,7 @@ const Page = () => {
         email: "Please enter a valid email",
       });
       hasError = true;
-    } else if (
-      localhost?.city === "" ||
-      localhost?.city === undefined ||
-      localhost?.city === null
-    ) {
+    } else if (isEmpty(localhost?.city)) {
       toast.error("Please select a valid city");
       setErrors({
         ...errors,
@@ -97,6 +80,7 @@ const Page = () => {
       hasError = true;
     } else {
       try {
+        setLoading(true);
         const res: AxiosResponse = await axios.post(
           "http://194.163.45.154:3120/localhosts",
           localhost
@@ -123,9 +107,21 @@ const Page = () => {
           ? err.response.data.message[0]
           : err.response.data.message;
         toast.error(errMsg);
+        setLoading(false);
       }
     }
   };
+
+  const getAllCities = async () => {
+    const res = await axios.get("http://194.163.45.154:3120/cities");
+    if (res?.data?.data) {
+      setCities(res.data.data);
+    }
+  };
+
+  useEffect(() => {
+    getAllCities();
+  }, []);
 
   return (
     <MaxWidthWrapper>
@@ -183,7 +179,9 @@ const Page = () => {
                   </div>
 
                   <div className="relative flex flex-col gap-1 w-full">
-                    <Label>City</Label>
+                    <Label className={`${errors?.city && "text-red-600"}`}>
+                      City
+                    </Label>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
@@ -191,38 +189,55 @@ const Page = () => {
                           role="combobox"
                           className="w-full justify-between"
                         >
-                          {options.city.label}
+                          {cities?.length > 0
+                            ? (() => {
+                                const matchedCity = cities.find(
+                                  (item) => item._id === localhost.city
+                                );
+                                return matchedCity
+                                  ? matchedCity.city_name
+                                  : "Select City";
+                              })()
+                            : "Select City"}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        {CITIES.options.map((city) => (
-                          <DropdownMenuItem
-                            key={city.label}
-                            className={cn(
-                              "flex text-sm gap-1 items-center p-1.5 cursor-default hover:bg-zinc-100",
-                              {
-                                "bg-zinc-100":
-                                  city.label === options.city.label,
-                              }
-                            )}
-                            onClick={() => {
-                              setOptions((prev) => ({ ...prev, city }));
-                            }}
-                          >
-                            <Check
+                        {cities?.length > 0 &&
+                          cities.map((city) => (
+                            <DropdownMenuItem
+                              key={city._id}
                               className={cn(
-                                "mr-2 h-4 w-4",
-                                city.label === options.city.label
-                                  ? "opacity-100"
-                                  : "opacity-0"
+                                "flex text-sm gap-1 items-center p-1.5 cursor-default hover:bg-zinc-100",
+                                {
+                                  "bg-zinc-100": city._id === localhost.city,
+                                }
                               )}
-                            />
-                            {city.label}
-                          </DropdownMenuItem>
-                        ))}
+                              onClick={() => {
+                                setLocalHost((prev) => ({
+                                  ...prev,
+                                  city: city._id,
+                                }));
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  city._id === localhost.city
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {city.city_name}
+                            </DropdownMenuItem>
+                          ))}
                       </DropdownMenuContent>
                     </DropdownMenu>
+                    {errors?.city && (
+                      <p className="text-red-600 text-xs italic">
+                        {errors?.city}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -242,12 +257,16 @@ const Page = () => {
             </p> */}
 
                 <Button
-                  disabled={isPending}
+                  disabled={loading}
                   onClick={handleClick}
                   size="sm"
                   className="text-sm"
                 >
-                  Submit for Verification Email
+                  {loading ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    "Submit for Verification Email"
+                  )}
                 </Button>
               </div>
             </div>
