@@ -7,8 +7,9 @@ import { LogoutUser } from "../../utils/storage";
 function Logout() {
     const router = useRouter();
 
-    if (localStorage.getItem("jwtToken"))
+    if (typeof localStorage !== "undefined") {
         localStorage.removeItem("jwtToken");
+    }
 
 
     return router.push("/login")

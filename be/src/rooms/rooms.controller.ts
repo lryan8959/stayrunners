@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, HttpStatus, Post, Req, Res, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, HttpStatus, Post, Get, Req, Res, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CreateRoomDto } from './dtos/CreateRoom.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { Request } from 'express';
@@ -41,6 +41,32 @@ export class RoomsController {
             return res.status(HttpStatus.CREATED).json({
                 success: true,
                 data: room
+            });
+        } else {
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                message: 'Internal server error'
+            });
+        }
+    }
+
+    @Get()
+    @UseGuards(JwtAuthGuard)
+    async getLocalhostRooms(
+        @Req() req: Request,
+        @Res() res) {
+    
+        const id: any = (req.user as any).id;
+        const rooms = await this.roomsService.getLocalhostRooms(id);
+        if (rooms?.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Rooms not found'
+            });
+        } else if (rooms?.length > 0) {
+            return res.status(200).json({
+                success: true,
+                data: rooms
             });
         } else {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({

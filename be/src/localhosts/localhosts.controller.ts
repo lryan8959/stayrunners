@@ -102,7 +102,7 @@ export class LocalhostsController {
     if (localhost === 'Email does not exist') {
       throw new HttpException('Email does not exist', 400);
     } else if (localhost) {
-      return res.status(201).json({
+      return res.status(200).json({
         data: localhost,
       });
     } else {

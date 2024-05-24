@@ -7,6 +7,7 @@ import { MongooseOmModule } from './mongoose.om/mongoose.om.module';
 import { CacheRedisModule } from './cache.redis/cache.redis.module';
 import { RedisModule } from './redis/redis.module';
 import { CountriesModule } from './countries/countries.module';
+import { CitiesModule } from './cities/cities.module';
 import { LocalhostsModule } from './localhosts/localhosts.module';
 import { AuthModule } from './auth/auth.module';
 import { CustomersModule } from './customers/customers.module';
@@ -15,6 +16,8 @@ import { RoomsModule } from './rooms/rooms.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ChatGateway } from './chat/chat.gateway';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -22,8 +25,13 @@ import { ChatGateway } from './chat/chat.gateway';
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.development'],
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
     MongooseOmModule,
     CountriesModule,
+    CitiesModule,
     LocalhostsModule,
     AuthModule,
     CustomersModule,
