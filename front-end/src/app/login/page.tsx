@@ -10,12 +10,16 @@ import axios, { AxiosResponse } from "axios";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ArrowRight, Check, Star, ChevronsUpDown, Loader2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import Link from "next/link";
 
 const Page = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from") || "";
+  const id = searchParams.get("id") || "";
 
   const [localhost, setLocalHost] = useState({
     email: "",
@@ -72,7 +76,12 @@ const Page = () => {
         if (res.status === 200) {
           if (res?.data?.token) {
             saveToken(res?.data?.token);
-            router.push("/localhost/home");
+            console.log(from);
+            if (from === "negotiate" && id) {
+              router.push("/negotiate?id=" + id);
+            } else {
+              router.push("/localhost/home");
+            }
           }
         }
       } catch (err: any) {

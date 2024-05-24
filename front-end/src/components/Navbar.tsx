@@ -10,43 +10,35 @@ import { useEffect, useState } from "react";
 const Navbar = () => {
   const [isUpdate, setIsUpdate] = useState(false);
 
-
   const router = useRouter();
   const pathname = usePathname();
-  
-
 
   let IsUser = false;
   let token = null;
-  
+
   // Check if localStorage is available
   if (typeof localStorage !== "undefined") {
     // If available, retrieve the token
     token = localStorage.getItem("jwtToken");
     console.log("Token retrieved from localStorage:", token);
   }
-  
+
   if (token) {
     IsUser = true;
     // Assuming router is properly defined and imported
     // router.push("/localhost/home");
   }
-  
+
   // Optionally, handle the case where the token is not present or router redirection fails
   // if (!IsUser) {
   //   console.log("User is not authenticated or token is missing.");
   //   // Optionally, you might want to redirect to a login page or display an error message
   // }
-  
-
-
-
-
 
   // let IsUser;
 
   // // const token = localStorage.getItem("jwtToken") ? localStorage.getItem("jwtToken") : null;
-  
+
   // const token = localStorage.getItem("jwtToken");
   // //console.log("win",window);
 
@@ -65,8 +57,8 @@ const Navbar = () => {
   // }
 
   useEffect(() => {
-    setIsUpdate(!isUpdate)
-  }, [pathname])
+    setIsUpdate(!isUpdate);
+  }, [pathname]);
   //console.log("Is user in navbar ",IsUser);
 
   // const token = localStorage.getItem("jwtToken");
@@ -93,6 +85,15 @@ const Navbar = () => {
           <div className="h-full flex items-center space-x-4">
             {IsUser ? (
               <>
+                <Link
+                  href="/localhost/home"
+                  className={buttonVariants({
+                    size: "sm",
+                    variant: "ghost",
+                  })}
+                >
+                  Dashboard ✨
+                </Link>
                 <Link
                   href="/logout"
                   className={buttonVariants({
@@ -127,7 +128,6 @@ const Navbar = () => {
               </>
             ) : (
               <>
-
                 <Link
                   href="/login"
                   className={buttonVariants({
@@ -138,7 +138,6 @@ const Navbar = () => {
                 >
                   Login
                 </Link>
-
 
                 <div className="h-8 w-px bg-zinc-200 hidden sm:block" />
 
