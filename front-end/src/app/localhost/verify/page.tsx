@@ -68,9 +68,9 @@ const Page = () => {
 
         if (res.status === 200) {
           setUserDataInLocalStorage({
-            name: userData?.name || "",
+            name: userData?.name || res?.data?.data?.name || "",
             email: userData?.email || "",
-            city: userData?.city || "",
+            city: userData?.city || res?.data?.data?.city || "",
             id: res?.data?.data?._id,
             code_verified: res?.data?.data?.code_verified,
             password: res?.data?.data?.password,
