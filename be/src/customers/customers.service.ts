@@ -87,7 +87,7 @@ export class CustomersService {
                     <p>A new room request has been received:</p>
                     <ul>
                         <li><strong>Name:</strong> ${CustomerName}</li>
-                        <li><strong>City:</strong> {{city}}</li>
+                        <li><strong>City:</strong> New York</li>
                         <li><strong>Beds:</strong> ${beds}</li>
                         <li><strong>People:</strong> ${people}</li>
                         <li><strong>Nights:</strong> ${nights}</li>

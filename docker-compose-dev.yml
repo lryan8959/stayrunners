@@ -9,6 +9,7 @@ services:
     volumes:
       - ./be:/usr/src/app
       - /usr/src/app/node_modules
+      - ./be/uploads:/usr/src/app/uploads
     environment:
       - NODE_ENV=development
     command: npm run start:dev

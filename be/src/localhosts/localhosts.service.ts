@@ -166,7 +166,7 @@ export class LocalhostsService {
     localhost.code_verified_at = new Date();
     localhost.password = hashedPassword;
     await localhost.save();
-    return { _id: localhost._id, code_verified: true, password };
+    return { _id: localhost._id, name: localhost.name, code_verified: true, password };
   }
 
   async resendVerificationCode(id) {

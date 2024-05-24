@@ -15,4 +15,9 @@ export class RoomsService {
         const newRoom = new this.roomModel(createRoomDto);
         return await newRoom.save();
     }
+
+    async getLocalhostRooms(id) {
+        const rooms = this.roomModel.find({ localhost: id }).populate('city');
+        return rooms;
+    }
 }
