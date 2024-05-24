@@ -29,7 +29,7 @@ const Navbar = () => {
   if (token) {
     IsUser = true;
     // Assuming router is properly defined and imported
-    router.push("/localhost/home");
+    // router.push("/localhost/home");
   }
   
   // Optionally, handle the case where the token is not present or router redirection fails
