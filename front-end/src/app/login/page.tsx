@@ -12,6 +12,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { ArrowRight, Check, Star, ChevronsUpDown, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import Link from "next/link";
 
 const Page = () => {
   const router = useRouter();
@@ -170,9 +171,11 @@ const Page = () => {
             </div>
             <div className="flex justify-center items-center py-2">
               <p className="text-sm mr-2">Forgot password? </p>
-              <p className="text-sm text-blue-700 cursor-pointer underline">
-                Click here
-              </p>
+              <Link href={"/localhost/forgot-password"}>
+                <p className="text-sm text-blue-700 cursor-pointer underline">
+                  Click here
+                </p>
+              </Link>
             </div>
           </div>
         </div>
