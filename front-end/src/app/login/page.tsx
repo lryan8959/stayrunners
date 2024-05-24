@@ -12,6 +12,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { ArrowRight, Check, Star, ChevronsUpDown, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import Link from "next/link";
 
 const Page = () => {
   const router = useRouter();
@@ -50,7 +51,6 @@ const Page = () => {
         email: "Please enter a valid email",
       });
       hasError = true;
-      
     } else if (localhost?.password === "") {
       toast.error("Please enter your password");
       setErrors({
@@ -58,7 +58,6 @@ const Page = () => {
         password: "Please enter your password",
       });
       hasError = true;
-      
     } else {
       try {
         setLoading(true);
@@ -69,10 +68,7 @@ const Page = () => {
             password: localhost.password,
           }
         );
-      
-        if (res) {
-          setLoading(false);
-        }
+
         if (res.status === 200) {
           if (res?.data?.token) {
             saveToken(res?.data?.token);
@@ -165,21 +161,21 @@ const Page = () => {
                   size="sm"
                   className="text-sm px-10"
                 >
-                  {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : "Login"}
-                  {/* <Loader2 className="w-3 h-3 animate-spin" /> */}
-
-
+                  {loading ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    "Login"
+                  )}
                 </Button>
-
-
-
               </div>
             </div>
             <div className="flex justify-center items-center py-2">
               <p className="text-sm mr-2">Forgot password? </p>
-              <p className="text-sm text-blue-700 cursor-pointer underline">
-                Click here
-              </p>
+              <Link href={"/localhost/forgot-password"}>
+                <p className="text-sm text-blue-700 cursor-pointer underline">
+                  Click here
+                </p>
+              </Link>
             </div>
           </div>
         </div>

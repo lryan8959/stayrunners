@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Label } from "@/components/ui/label";
@@ -14,9 +14,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { isValidPrice } from "@/utils/validation";
+import { isEmpty, isValidPrice } from "@/utils/validation";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -25,6 +25,11 @@ interface IFormInput {
   min_price_per_night: number;
   payment_option: number;
   pictures: FileList;
+}
+
+interface City {
+  _id: string;
+  city_name: string;
 }
 
 const Page: React.FC = () => {
@@ -36,6 +41,8 @@ const Page: React.FC = () => {
     formState: { errors },
   } = useForm<IFormInput>();
   const [images, setImages] = useState<string[]>([]);
+
+  const [loading, setLoading] = useState(false);
 
   const [roomData, setRoomData] = useState({
     min_price_per_night: "",
@@ -53,6 +60,8 @@ const Page: React.FC = () => {
     description: "",
   });
 
+  const [cities, setCities] = useState<City[]>([]);
+
   const [options, setOptions] = useState<{
     city: (typeof CITIES.options)[number];
     payment_option: (typeof PAYMENT_OPTIONS.options)[number];
@@ -66,55 +75,86 @@ const Page: React.FC = () => {
       return {
         min_price_per_night: roomData.min_price_per_night,
         payment_option: options.payment_option.value,
-        city: options.city.value,
+        city: roomData.city,
         billing: roomData.billing,
         description: roomData.description,
       };
     });
     setDataErrors(() => {
       return {
-        min_price_per_night: roomData.min_price_per_night
-          ? ""
-          : "Min Price per Night is required",
-        payment_option: roomData.payment_option
-          ? ""
-          : "Payment option is required",
-        city: roomData.city ? "" : "City is required",
-        billing: roomData.billing ? "" : "Billing is required",
-        description: roomData.description ? "" : "Description is required",
+        min_price_per_night: "",
+        payment_option: "",
+        city: "",
+        billing: "",
+        description: "",
       };
     });
 
-    var formData = new FormData();
-    formData.append("min_price_per_night", roomData.min_price_per_night);
-    formData.append("payment_option", roomData.payment_option);
-    formData.append("city", roomData.city);
-    formData.append("billing", roomData.billing);
-    formData.append("description", roomData.description);
-    Array.from(data.pictures).forEach((image) => {
-      formData.append("images", image);
-    });
+    if (isEmpty(roomData?.min_price_per_night)) {
+      toast.error("Please enter a valid price");
+      setDataErrors({
+        ...dataErrors,
+        min_price_per_night: "Please enter a valid price",
+      });
+    } else if (isEmpty(roomData?.payment_option)) {
+      toast.error("Please select a valid payment option");
+      setDataErrors({
+        ...dataErrors,
+        payment_option: "Please select a valid payment option",
+      });
+    } else if (isEmpty(roomData?.city)) {
+      toast.error("Please select a valid city");
+      setDataErrors({
+        ...dataErrors,
+        city: "Please select a valid city",
+      });
+    } else if (isEmpty(roomData?.billing)) {
+      toast.error("Please enter a valid billing");
+      setDataErrors({
+        ...dataErrors,
+        billing: "Please enter a valid billing",
+      });
+    } else if (isEmpty(roomData?.description)) {
+      toast.error("Please enter a valid description of room");
+      setDataErrors({
+        ...dataErrors,
+        description: "Please enter a valid description of room",
+      });
+    } else {
+      var formData = new FormData();
+      formData.append("min_price_per_night", roomData.min_price_per_night);
+      formData.append("payment_option", roomData.payment_option);
+      formData.append("city", roomData.city);
+      formData.append("billing", roomData.billing);
+      formData.append("description", roomData.description);
+      Array.from(data.pictures).forEach((image) => {
+        formData.append("images", image);
+      });
 
-    try {
-      const res: AxiosResponse = await axios.post(
-        "http://194.163.45.154:3120/rooms",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-          },
+      try {
+        setLoading(true);
+        const res: AxiosResponse = await axios.post(
+          "http://194.163.45.154:3120/rooms",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            },
+          }
+        );
+        if (res.status === 201) {
+          toast.success("Room has been added successfully");
+          router.push("/localhost/home");
         }
-      );
-      if (res.status === 201) {
-        toast.success("Room has been added successfully");
-        router.push("/localhost/home");
+      } catch (err: any) {
+        const errMsg = Array.isArray(err.response.data.message)
+          ? err.response.data.message[0]
+          : err.response.data.message;
+        toast.success(errMsg);
+        setLoading(false);
       }
-    } catch (err: any) {
-      const errMsg = Array.isArray(err.response.data.message)
-        ? err.response.data.message[0]
-        : err.response.data.message;
-      toast.success(errMsg);
     }
+
     // Handle form submission
   };
 
@@ -135,6 +175,17 @@ const Page: React.FC = () => {
       Array.from(files).map((file) => URL.revokeObjectURL(file.toString()));
     }
   };
+
+  const getAllCities = async () => {
+    const res = await axios.get("http://194.163.45.154:3120/cities");
+    if (res?.data?.data) {
+      setCities(res.data.data);
+    }
+  };
+
+  useEffect(() => {
+    getAllCities();
+  }, []);
 
   return (
     <div className="bg-slate-50 grainy-light">
@@ -188,7 +239,9 @@ const Page: React.FC = () => {
                             role="combobox"
                             className="w-full justify-between"
                           >
-                            {options.payment_option.label}
+                            {roomData?.payment_option === ""
+                              ? "Select Payment Option"
+                              : options.payment_option.label}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -246,37 +299,48 @@ const Page: React.FC = () => {
                             role="combobox"
                             className="w-full justify-between"
                           >
-                            {options.city.label}
+                            {cities?.length > 0
+                              ? (() => {
+                                  const matchedCity = cities.find(
+                                    (item) => item._id === roomData.city
+                                  );
+                                  return matchedCity
+                                    ? matchedCity.city_name
+                                    : "Select City";
+                                })()
+                              : "Select City"}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </DropdownMenuTrigger>
-
                         <DropdownMenuContent>
-                          {CITIES.options.map((city) => (
-                            <DropdownMenuItem
-                              key={city.label}
-                              className={cn(
-                                "flex text-sm gap-1 items-center p-1.5 cursor-default hover:bg-zinc-100",
-                                {
-                                  "bg-zinc-100":
-                                    city.label === options.city.label,
-                                }
-                              )}
-                              onClick={() => {
-                                setOptions((prev) => ({ ...prev, city }));
-                              }}
-                            >
-                              <Check
+                          {cities?.length > 0 &&
+                            cities.map((city) => (
+                              <DropdownMenuItem
+                                key={city._id}
                                 className={cn(
-                                  "mr-2 h-4 w-4",
-                                  city.label === options.city.label
-                                    ? "opacity-100"
-                                    : "opacity-0"
+                                  "flex text-sm gap-1 items-center p-1.5 cursor-default hover:bg-zinc-100",
+                                  {
+                                    "bg-zinc-100": city._id === roomData.city,
+                                  }
                                 )}
-                              />
-                              {city.label}
-                            </DropdownMenuItem>
-                          ))}
+                                onClick={() => {
+                                  setRoomData((prev) => ({
+                                    ...prev,
+                                    city: city._id,
+                                  }));
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    city._id === roomData.city
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {city.city_name}
+                              </DropdownMenuItem>
+                            ))}
                         </DropdownMenuContent>
                       </DropdownMenu>
                       {dataErrors?.city && (
@@ -288,7 +352,7 @@ const Page: React.FC = () => {
 
                     <div className="relative flex flex-col gap-1 w-full">
                       <Label
-                        className={`${dataErrors?.city && "text-red-600"}`}
+                        className={`${dataErrors?.billing && "text-red-600"}`}
                       >
                         Billing
                       </Label>
@@ -367,8 +431,17 @@ const Page: React.FC = () => {
               <div className="w-full px-8 bg-white pb-12 rounded-md">
                 <div className="w-full h-full flex justify-end items-center">
                   <div className="w-full flex justify-center gap-6 items-center">
-                    <Button type="submit" size="sm" className="text-sm px-10">
-                      save
+                    <Button
+                      disabled={loading}
+                      type="submit"
+                      size="sm"
+                      className="text-sm px-10"
+                    >
+                      {loading ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        "Save"
+                      )}
                     </Button>
                     <Link href={"/localhost/home"}>
                       <Button

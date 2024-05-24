@@ -1,15 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import { Icons } from "@/components/Icons";
+import React, { useState, useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn, formatPrice } from "@/lib/utils";
-import { RadioGroup } from "@headlessui/react";
+import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,10 +14,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { ArrowRight, Check, Star, ChevronsUpDown } from "lucide-react";
+import { ArrowRight, Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { BASE_PRICE } from "@/config/products";
-import { FINISHES, CITIES, MATERIALS } from "@/validators/option-validator";
 import {
   isEmpty,
   isNumber,
@@ -30,6 +25,11 @@ import {
 } from "@/utils/validation";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+
+interface City {
+  _id: string;
+  city_name: string;
+}
 
 export default function Home() {
   const router = useRouter();
@@ -55,17 +55,9 @@ export default function Home() {
     special_instructions: "",
   });
 
-  const [options, setOptions] = useState<{
-    city: (typeof CITIES.options)[number];
-    material: (typeof MATERIALS.options)[number];
-    finish: (typeof FINISHES.options)[number];
-  }>({
-    city: CITIES.options[0],
-    material: MATERIALS.options[0],
-    finish: FINISHES.options[0],
-  });
+  const [cities, setCities] = useState<City[]>([]);
 
-  const isPending = false;
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -81,12 +73,6 @@ export default function Home() {
   };
 
   const handleClick = async () => {
-    setBidData(() => {
-      return {
-        ...bidData,
-        city: options.city.value,
-      };
-    });
     setDataErrors(() => {
       return {
         name: "",
@@ -111,20 +97,7 @@ export default function Home() {
         };
       });
       hasError = true;
-    }
-
-    if (!isValidName(bidData?.name)) {
-      toast.error("Please enter a valid name");
-      setDataErrors(() => {
-        return {
-          ...dataErrors,
-          name: "Please enter a valid name",
-        };
-      });
-      hasError = true;
-    }
-
-    if (!isValidEmail(bidData?.email)) {
+    } else if (!isValidEmail(bidData?.email)) {
       toast.error("Please enter a valid email");
       setDataErrors(() => {
         return {
@@ -133,8 +106,7 @@ export default function Home() {
         };
       });
       hasError = true;
-    }
-    if (isEmpty(bidData?.city)) {
+    } else if (isEmpty(bidData?.city)) {
       toast.error("Please select a city");
       setDataErrors(() => {
         return {
@@ -143,9 +115,7 @@ export default function Home() {
         };
       });
       hasError = true;
-    }
-
-    if (isEmpty(bidData?.beds)) {
+    } else if (isEmpty(bidData?.beds)) {
       toast.error("Please enter a valid no of beds");
       setDataErrors(() => {
         return {
@@ -154,9 +124,7 @@ export default function Home() {
         };
       });
       hasError = true;
-    }
-
-    if (isEmpty(bidData?.people)) {
+    } else if (isEmpty(bidData?.people)) {
       toast.error("Please enter a valid no of people");
       setDataErrors(() => {
         return {
@@ -165,9 +133,7 @@ export default function Home() {
         };
       });
       hasError = true;
-    }
-
-    if (isEmpty(bidData?.nights)) {
+    } else if (isEmpty(bidData?.nights)) {
       toast.error("Please enter a valid no of nights");
       setDataErrors(() => {
         return {
@@ -176,9 +142,7 @@ export default function Home() {
         };
       });
       hasError = true;
-    }
-
-    if (isEmpty(bidData?.price_willing_to_pay)) {
+    } else if (isEmpty(bidData?.price_willing_to_pay)) {
       toast.error("Please enter a valid price");
       setDataErrors(() => {
         return {
@@ -187,9 +151,7 @@ export default function Home() {
         };
       });
       hasError = true;
-    }
-
-    if (isEmpty(bidData?.special_instructions)) {
+    } else if (isEmpty(bidData?.special_instructions)) {
       toast.error("Please enter special instructions");
       setDataErrors(() => {
         return {
@@ -200,6 +162,7 @@ export default function Home() {
       hasError = true;
     } else {
       try {
+        setLoading(true);
         const res: AxiosResponse = await axios.post(
           "http://194.163.45.154:3120/customers/create-bid",
           bidData
@@ -213,9 +176,21 @@ export default function Home() {
           ? err.response.data.message[0]
           : err.response.data.message;
         toast.error(errMsg);
+        setLoading(false);
       }
     }
   };
+
+  const getAllCities = async () => {
+    const res = await axios.get("http://194.163.45.154:3120/cities");
+    if (res?.data?.data) {
+      setCities(res.data.data);
+    }
+  };
+
+  useEffect(() => {
+    getAllCities();
+  }, []);
 
   return (
     <div className="bg-slate-50 grainy-light">
@@ -347,36 +322,49 @@ export default function Home() {
                                 role="combobox"
                                 className="w-full justify-between"
                               >
-                                {options.city.label}
+                                {cities?.length > 0
+                                  ? (() => {
+                                      const matchedCity = cities.find(
+                                        (item) => item._id === bidData.city
+                                      );
+                                      return matchedCity
+                                        ? matchedCity.city_name
+                                        : "Select City";
+                                    })()
+                                  : "Select City"}
                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                              {CITIES.options.map((city) => (
-                                <DropdownMenuItem
-                                  key={city.label}
-                                  className={cn(
-                                    "flex text-sm gap-1 items-center p-1.5 cursor-default hover:bg-zinc-100",
-                                    {
-                                      "bg-zinc-100":
-                                        city.label === options.city.label,
-                                    }
-                                  )}
-                                  onClick={() => {
-                                    setOptions((prev) => ({ ...prev, city }));
-                                  }}
-                                >
-                                  <Check
+                              {cities?.length > 0 &&
+                                cities.map((city) => (
+                                  <DropdownMenuItem
+                                    key={city._id}
                                     className={cn(
-                                      "mr-2 h-4 w-4",
-                                      city.label === options.city.label
-                                        ? "opacity-100"
-                                        : "opacity-0"
+                                      "flex text-sm gap-1 items-center p-1.5 cursor-default hover:bg-zinc-100",
+                                      {
+                                        "bg-zinc-100":
+                                          city._id === bidData.city,
+                                      }
                                     )}
-                                  />
-                                  {city.label}
-                                </DropdownMenuItem>
-                              ))}
+                                    onClick={() => {
+                                      setBidData((prev) => ({
+                                        ...prev,
+                                        city: city._id,
+                                      }));
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        city._id === bidData.city
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {city.city_name}
+                                  </DropdownMenuItem>
+                                ))}
                             </DropdownMenuContent>
                           </DropdownMenu>
                           {dataErrors?.city && (
@@ -518,21 +506,18 @@ export default function Home() {
                   <div className="h-px w-full bg-zinc-200" />
                   <div className="w-full h-full flex justify-end items-center">
                     <div className="w-full flex gap-6 items-center">
-                      {/* <p className="font-medium whitespace-nowrap">
-                        {formatPrice(
-                          (BASE_PRICE +
-                            options.finish.price +
-                            options.material.price) /
-                            100
-                        )}
-                      </p> */}
                       <Button
-                        disabled={isPending}
+                        disabled={loading}
                         onClick={handleClick}
                         size="sm"
                         className="w-full"
                       >
-                        Create a bid
+                        {loading ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          "Create a bid"
+                        )}
+
                         <ArrowRight className="h-4 w-4 ml-1.5 inline" />
                       </Button>
                     </div>
