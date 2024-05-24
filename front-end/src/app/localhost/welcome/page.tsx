@@ -2,15 +2,17 @@
 
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { toast } from "react-toastify";
-import { Copy } from "lucide-react";
+import { Copy, Loader2 } from "lucide-react";
 import { CopyCheck } from "lucide-react";
 import {
   getUserDataFromLocalStorage,
+  saveToken,
   setUserDataInLocalStorage,
 } from "../../../utils/storage";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import axios, { AxiosResponse } from "axios";
 import { useState, useTransition } from "react";
 
 const Page = () => {
@@ -19,6 +21,8 @@ const Page = () => {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const router = useRouter();
   const [passwordCopied, setPasswordCopied] = useState(false);
+
+  const [loading, setLoading] = useState(false);
 
   const handleCopy = (password: string) => {
     navigator.clipboard
@@ -32,7 +36,39 @@ const Page = () => {
       });
   };
 
-  const [isPending, startTransition] = useTransition();
+  const handleClick = async () => {
+    try {
+      setLoading(true);
+      const res: AxiosResponse = await axios.post(
+        "http://194.163.45.154:3120/auth/login",
+        {
+          username: userData?.email,
+          password: userData?.password,
+        }
+      );
+
+      if (res.status === 200) {
+        if (res?.data?.token) {
+          saveToken(res?.data?.token);
+          setUserDataInLocalStorage({
+            name: userData?.name || "",
+            email: userData?.email || "",
+            city: userData?.city || "",
+            id: userData?.id || "",
+            code_verified: userData?.code_verified || false,
+            password: "",
+          });
+          router.push("/localhost/home");
+        }
+      }
+    } catch (err: any) {
+      setLoading(false);
+      const errMsg = Array.isArray(err.response.data.message)
+        ? err.response.data.message[0]
+        : err.response.data.message;
+      toast.error(errMsg);
+    }
+  };
 
   return (
     <MaxWidthWrapper>
@@ -105,12 +141,16 @@ const Page = () => {
                   Description of the Room
                 </p>
                 <Button
-                  disabled={isPending}
-                  onClick={() => console.log("click")}
+                  disabled={loading}
+                  onClick={handleClick}
                   size="sm"
                   className="text-sm px-10"
                 >
-                  Login
+                  {loading ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    "Login"
+                  )}
                 </Button>
                 <p className="text-sm text-gray-500 mt-6">
                   You will get notifications To your email address Of any demand
