@@ -18,6 +18,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { Loader2 } from "lucide-react";
 
 const Page = () => {
   const userData = getUserDataFromLocalStorage();
@@ -25,11 +26,15 @@ const Page = () => {
   const router = useRouter();
   const [verificationCode, setVerificationCode] = useState("");
 
+  const [loading, setLoading] = useState(false);
+  const [loading2, setLoading2] = useState(false);
+
   const [isPending, startTransition] = useTransition();
 
   const handleResendCode = async () => {
     try {
       setSeconds(60);
+      setLoading(true);
       const res = await axios.patch(
         `http://194.163.45.154:3120/localhosts/resend-verification-code/${userData?.id}`
       );
@@ -44,6 +49,7 @@ const Page = () => {
         ? err.response.data.message[0]
         : err.response.data.message;
       toast.error(errMsg);
+      setLoading(false);
     }
   };
 
@@ -52,6 +58,7 @@ const Page = () => {
       toast.error("Please enter a valid verification code");
     } else {
       try {
+        setLoading2(true);
         const res = await axios.patch(
           `http://194.163.45.154:3120/localhosts/verify/${userData?.id}`,
           {
@@ -73,13 +80,12 @@ const Page = () => {
             router.push("/localhost/welcome");
           });
         }
-
-        toast.error("Something went wrong");
       } catch (err: any) {
         const errMsg = Array.isArray(err.response.data.message)
           ? err.response.data.message[0]
           : err.response.data.message;
         toast.error(errMsg);
+        setLoading2(false);
       }
     }
   };
@@ -157,21 +163,29 @@ const Page = () => {
             </p> */}
                 {seconds < 1 ? (
                   <Button
-                    disabled={isPending}
+                    disabled={loading}
                     onClick={handleResendCode}
                     size="sm"
                     className="text-sm"
                   >
-                    Resend code
+                    {loading ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      "Resend code"
+                    )}
                   </Button>
                 ) : (
                   <Button
-                    disabled={isPending}
+                    disabled={loading2}
                     onClick={handleClick}
                     size="sm"
                     className="text-sm"
                   >
-                    Submit
+                    {loading2 ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      "Submit"
+                    )}
                   </Button>
                 )}
               </div>
