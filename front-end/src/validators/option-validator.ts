@@ -49,11 +49,11 @@ export const PAYMENT_OPTIONS = {
   options: [
     {
       label: "Cash",
-      value: "66339c6df634f963321faab5",
+      value: "Cash",
     },
     {
       label: "Credit Card",
-      value: "66339c6df634f963321faac6",
+      value: "Credit Card",
     },
   ],
 } as const;
