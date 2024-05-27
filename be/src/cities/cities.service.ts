@@ -16,15 +16,13 @@ export class CitiesService {
         const { city_name, country } = createCityDto
         const findCountry = await this.countryModel.findById(country).exec();
         if (!findCountry) {
-          return 'Please select valid country';
+          return 'Country does not exist';
         }
 
         const findCity = await this.cityModel.findOne({city_name, country}).exec();
         if (findCity) {
           return 'City already exists';
         }
-
-
 
         const createdCity = new this.cityModel(createCityDto);
         return createdCity.save();
