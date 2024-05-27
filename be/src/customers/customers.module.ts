@@ -7,6 +7,7 @@ import { Bid, BidSchema } from 'src/schemas/Bid.schema';
 import { Localhost, LocalhostSchema } from 'src/schemas/Localhost.schema';
 import { RoomRequests, RoomRequestsSchema } from 'src/schemas/RoomRequests.schema';
 import { EmailService } from 'src/utils/EmailService';
+import { City, CitySchema } from 'src/schemas/City.schema';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { EmailService } from 'src/utils/EmailService';
       { name: Customer.name, schema: CustomerSchema },
       { name : Bid.name, schema: BidSchema },
       { name: Localhost.name, schema: LocalhostSchema },
-      { name: RoomRequests.name, schema: RoomRequestsSchema }
+      { name: RoomRequests.name, schema: RoomRequestsSchema },
+      { name: City.name, schema: CitySchema},
     ])
   ],
   controllers: [CustomersController],

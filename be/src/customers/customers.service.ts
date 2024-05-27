@@ -7,6 +7,7 @@ import { Bid } from 'src/schemas/Bid.schema';
 import { Localhost } from 'src/schemas/Localhost.schema';
 import { RoomRequests } from 'src/schemas/RoomRequests.schema';
 import { EmailService } from 'src/utils/EmailService';
+import { City } from 'src/schemas/City.schema';
 
 @Injectable()
 export class CustomersService {
@@ -15,10 +16,17 @@ export class CustomersService {
     @InjectModel(Bid.name) private bidModel: Model<Bid>,
     @InjectModel('Localhost') private localhostModel: Model<Localhost>,
     @InjectModel('RoomRequests') private roomRequestModel: Model<RoomRequests>,
+    @InjectModel('City') private cityModel: Model<City>,
     private emailService: EmailService,
   ) {}
 
   async createBid(createBidDto: CreateBidDto) {
+    const { city } = createBidDto
+    const findCity = await this.cityModel.findById(city).exec();
+    if (!findCity) {
+      return 'City does not exist';
+    }
+
     const customer = await this.customerModel
       .findOne({ email: createBidDto.email })
       .exec();
@@ -87,13 +95,13 @@ export class CustomersService {
                     <p>A new room request has been received:</p>
                     <ul>
                         <li><strong>Name:</strong> ${CustomerName}</li>
-                        <li><strong>City:</strong> New York</li>
+                        <li><strong>City:</strong> ${findCity.city_name}</li>
                         <li><strong>Beds:</strong> ${beds}</li>
                         <li><strong>People:</strong> ${people}</li>
                         <li><strong>Nights:</strong> ${nights}</li>
                         <li><strong>Special Instructions:</strong> ${special_instructions}</li>
                     </ul>
-                    <a href="{{negotiateUrl}}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none;">Negotiate Room Stay</a>
+                    <a href="http://localhost:3003/negotiate?id=${savedBid._id}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none;">Negotiate Room Stay</a>
                     <p>If you have any questions or concerns, please contact us.</p>
                     <p>Thank you!</p>
                 </div>
@@ -120,7 +128,7 @@ export class CustomersService {
               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                   <h2>Confirmation</h2>
                   <p>Thank you,</p>
-                  <p>this Email confirms that you will receive an email if a Room is Available.</p>
+                  <p>This Email confirms that you will receive an email if a Room is Available.</p>
               </div>
           </body>
           </html>
