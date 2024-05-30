@@ -10,6 +10,7 @@ services:
       - ./be:/usr/src/app
       - /usr/src/app/node_modules
       - ./be/uploads:/usr/src/app/uploads
+      - ./ssl:/usr/ssl
     environment:
       - NODE_ENV=development
     command: npm run start:dev
