@@ -29,6 +29,12 @@ export class Room {
     @Prop({ required: true })
     billing: string;
 
+    @Prop({ required: true, default: false })
+    deleted: boolean;
+
+    @Prop()
+    deleted_at: Date;
+
     @Prop({ default: Date.now })
     created_at: Date;
 

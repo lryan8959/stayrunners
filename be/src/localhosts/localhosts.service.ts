@@ -33,7 +33,7 @@ export class LocalhostsService {
       findByEmail.verification_code = verificationcode;
       findByEmail.verification_code_created_at = new Date();
       await findByEmail.save();
-      await this.emailService.sendEmail(
+      const sent = await this.emailService.sendEmail(
         email,
         'Last Minute Booking Email Verification Alert',
         `<!DOCTYPE html>
@@ -56,6 +56,7 @@ export class LocalhostsService {
         </html>
         `,
       );
+      console.log('EMAIL SENT', sent);
       return { _id: findByEmail._id, code_verified: false };
     }
 
@@ -244,5 +245,65 @@ export class LocalhostsService {
         .exec();
     }
     return { bid: id, accepted: true, roomsCount: rooms.length, rooms };
+  }
+
+  async changeRoomAvailability(id, localhost) {
+    const room = await this.roomModel
+      .findOne({
+        _id: id,
+        localhost,
+      })
+      .exec();
+
+    if (!room) {
+      return 'Room not found';
+    }
+
+    room.available = !room.available;
+    room.updated_at = new Date();
+    const roomSaved = await room.save();
+    if (roomSaved) {
+      return true;
+    }
+    return false;
+  }
+
+  async deleteRoom(id, localhost) {
+    const room = await this.roomModel
+      .findOne({
+        _id: id,
+        localhost,
+        deleted: false
+      })
+      .exec();
+
+    if (!room) {
+      return 'Room not found';
+    }
+
+    room.deleted = true;
+    room.deleted_at = new Date();
+    const roomSaved = await room.save();
+    if (roomSaved) {
+      return true;
+    }
+    return false;
+  }
+
+  async getRoom(id, localhost) {
+    const room = await this.roomModel
+      .findOne({
+        _id: id,
+        localhost,
+        deleted: false
+      })
+      .exec();
+
+    if (!room) {
+      return 'Room not found';
+    }
+
+    return room;
+    
   }
 }
