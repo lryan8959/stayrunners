@@ -12,8 +12,8 @@ export class CitiesController {
 
       const city = await this.citiesService.createCity(createCityDto);
       
-      if (city === 'Please select valid country') {
-        throw new HttpException('Please select valid country', 400);
+      if (city === 'Country does not exist') {
+        throw new HttpException('Country does not exist', 400);
       } else if (city === 'City already exists') {
         throw new HttpException('City already exists', 400);
       } else if (city) {

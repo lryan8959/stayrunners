@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   Param,
@@ -160,6 +161,81 @@ export class LocalhostsController {
     } else if (accepted) {
       return res.status(200).json({
         data: accepted,
+      });
+    } else {
+      throw new HttpException('Internal server error', 500);
+    }
+  }
+
+  @Patch('/room-availability/:room_id')
+  @UseGuards(JwtAuthGuard)
+  async changeRoomAvailablity(
+    @Req() req: Request,
+    @Param('room_id') room_id: string,
+    @Res() res: Response,
+  ) {
+    const isValid = mongoose.Types.ObjectId.isValid(room_id);
+    if (!isValid) throw new HttpException('Room not found', 400);
+    const localhost: any = (req.user as any).id;
+    const room = await this.localhostsService.changeRoomAvailability(
+      room_id,
+      localhost,
+    );
+    if (room === 'Room not found') {
+      throw new HttpException('Room not found', 400);
+    } else if (room) {
+      return res.status(200).json({
+        data: room_id,
+      });
+    } else {
+      throw new HttpException('Internal server error', 500);
+    }
+  }
+
+  @Get('/room/:room_id')
+  @UseGuards(JwtAuthGuard)
+  async getRoom(
+    @Req() req: Request,
+    @Param('room_id') room_id: string,
+    @Res() res: Response,
+  ) {
+    const isValid = mongoose.Types.ObjectId.isValid(room_id);
+    if (!isValid) throw new HttpException('Room not found', 400);
+    const localhost: any = (req.user as any).id;
+    const room = await this.localhostsService.getRoom(
+      room_id,
+      localhost,
+    );
+    if (room === 'Room not found') {
+      throw new HttpException('Room not found', 400);
+    } else if (room) {
+      return res.status(200).json({
+        data: room,
+      });
+    } else {
+      throw new HttpException('Internal server error', 500);
+    }
+  }
+
+  @Delete('/room/:room_id')
+  @UseGuards(JwtAuthGuard)
+  async deleteRoom(
+    @Req() req: Request,
+    @Param('room_id') room_id: string,
+    @Res() res: Response,
+  ) {
+    const isValid = mongoose.Types.ObjectId.isValid(room_id);
+    if (!isValid) throw new HttpException('Room not found', 400);
+    const localhost: any = (req.user as any).id;
+    const room = await this.localhostsService.deleteRoom(
+      room_id,
+      localhost,
+    );
+    if (room === 'Room not found') {
+      throw new HttpException('Room not found', 400);
+    } else if (room) {
+      return res.status(200).json({
+        data: room_id,
       });
     } else {
       throw new HttpException('Internal server error', 500);
