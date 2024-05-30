@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios, { AxiosResponse } from "axios";
+import Chat from "@/components/Chat";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -18,7 +19,8 @@ const Page = () => {
 
   const acceptRoomRequest = async (id: string) => {
     const res: AxiosResponse = await axios.patch(
-      `http://194.163.45.154:3120/localhosts/accept-room-request/${id}`,
+      `https://194.163.45.154:3120/localhosts/accept-room-request/${id}`,
+      {},
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
@@ -66,13 +68,14 @@ const Page = () => {
   }
 
   return (
-    <div className="bg-white">
-      <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-        <div className="max-w-xl">
+    <div>
+      <div>
+        <div>
           {/* <p className="text-base font-medium text-primary">Thank you!</p> */}
-          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+          {/* <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
             Negotiate Page
-          </h1>
+          </h1> */}
+          <Chat />
           {/* <p className="mt-2 text-base text-zinc-500">
             A Local Host will be in touch.
           </p> */}

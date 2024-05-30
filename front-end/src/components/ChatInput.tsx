@@ -29,13 +29,31 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
     mutationKey: ["sendMessage"],
     // include message to later use it in onMutate
     mutationFn: async (_message: Message) => {
-      const response = await fetch("/api/message", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ messages }),
-      });
+      // const response = await fetch("/api/message", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({ messages }),
+      // });
+
+      const response = await fetch(
+        "https://console.dialogflow.com/v1/integrations/messenger/webhook/17bdb646-a3c1-46e8-9330-ba834c540806/sessions/webdemo-e696a4cc-e66b-495c-9d34-720e8e49b151?platform=webdemo",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            queryInput: {
+              text: {
+                text: input,
+                languageCode: "en",
+              },
+            },
+          }),
+        }
+      );
 
       return response.body;
     },
@@ -58,6 +76,18 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
 
       setIsMessageUpdating(true);
 
+      // for string
+      // const readableStream = new ReadableStream<Uint8Array>({
+      //   start(controller) {
+      //     const encoder = new TextEncoder();
+      //     const encodedMessage = encoder.encode(stream);
+      //     controller.enqueue(encodedMessage);
+      //     controller.close();
+      //   },
+      // });
+
+      // const reader = readableStream.getReader();
+
       const reader = stream.getReader();
       const decoder = new TextDecoder();
       let done = false;
@@ -66,7 +96,19 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         const chunkValue = decoder.decode(value);
-        updateMessage(id, (prev) => prev + chunkValue);
+        const prefix = ")]}'";
+        let cleanedResponseString = chunkValue;
+        if (chunkValue.startsWith(prefix)) {
+          // Remove the prefix if it exists
+          cleanedResponseString = chunkValue.slice(prefix.length);
+          const responseObject = JSON.parse(cleanedResponseString);
+          updateMessage(
+            id,
+            (prev) => prev + responseObject?.queryResult?.fulfillmentText
+          );
+        } else {
+          updateMessage(id, (prev) => prev + chunkValue);
+        }
       }
 
       // clean up

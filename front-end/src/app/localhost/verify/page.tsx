@@ -36,7 +36,7 @@ const Page = () => {
       setSeconds(60);
       setLoading(true);
       const res = await axios.patch(
-        `http://194.163.45.154:3120/localhosts/resend-verification-code/${userData?.id}`
+        `https://194.163.45.154:3120/localhosts/resend-verification-code/${userData?.id}`
       );
 
       if (res.status === 200) {
@@ -60,7 +60,7 @@ const Page = () => {
       try {
         setLoading2(true);
         const res = await axios.patch(
-          `http://194.163.45.154:3120/localhosts/verify/${userData?.id}`,
+          `https://194.163.45.154:3120/localhosts/verify/${userData?.id}`,
           {
             verification_code: parseInt(verificationCode, 10),
           }

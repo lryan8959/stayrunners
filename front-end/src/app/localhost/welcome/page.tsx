@@ -40,7 +40,7 @@ const Page = () => {
     try {
       setLoading(true);
       const res: AxiosResponse = await axios.post(
-        "http://194.163.45.154:3120/auth/login",
+        "https://194.163.45.154:3120/auth/login",
         {
           username: userData?.email,
           password: userData?.password,

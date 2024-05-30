@@ -164,7 +164,7 @@ export default function Home() {
       try {
         setLoading(true);
         const res: AxiosResponse = await axios.post(
-          "http://194.163.45.154:3120/customers/create-bid",
+          "https://194.163.45.154:3120/customers/create-bid",
           bidData
         );
         if (res.status === 201) {
@@ -182,7 +182,7 @@ export default function Home() {
   };
 
   const getAllCities = async () => {
-    const res = await axios.get("http://194.163.45.154:3120/cities");
+    const res = await axios.get("https://194.163.45.154:3120/cities");
     if (res?.data?.data) {
       setCities(res.data.data);
     }

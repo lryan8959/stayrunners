@@ -1,13 +1,12 @@
 "use client";
 
-import { useForm, SubmitHandler } from "react-hook-form";
 import { useState, useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
+import { useSearchParams } from "next/navigation";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CITIES, PAYMENT_OPTIONS } from "@/validators/option-validator";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,12 +20,6 @@ import Link from "next/link";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-interface IFormInput {
-  min_price_per_night: number;
-  payment_option: number;
-  pictures: FileList;
-}
-
 interface City {
   _id: string;
   city_name: string;
@@ -39,19 +32,17 @@ interface Payment_Option {
 
 const Page: React.FC = () => {
   const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<IFormInput>();
+  const searchParams = useSearchParams();
+  const room_id = searchParams.get("room_id") || "";
   const [images, setImages] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<FileList>();
 
   const [loading, setLoading] = useState(false);
 
   const [roomData, setRoomData] = useState({
     min_price_per_night: "",
     payment_option: "",
+    pic_urls: [],
     city: "",
     billing: "",
     description: "",
@@ -68,24 +59,9 @@ const Page: React.FC = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [paymentOptions, setPaymentOptions] = useState<Payment_Option[]>([]);
 
-  const [options, setOptions] = useState<{
-    city: (typeof CITIES.options)[number];
-    payment_option: (typeof PAYMENT_OPTIONS.options)[number];
-  }>({
-    city: CITIES.options[0],
-    payment_option: PAYMENT_OPTIONS.options[0],
-  });
-
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    setRoomData(() => {
-      return {
-        min_price_per_night: roomData.min_price_per_night,
-        payment_option: options.payment_option.value,
-        city: roomData.city,
-        billing: roomData.billing,
-        description: roomData.description,
-      };
-    });
+  const onSubmit = async (e: any) => {
+    e.preventDefault();
+    console.log(images);
     setDataErrors(() => {
       return {
         min_price_per_night: "",
@@ -133,14 +109,16 @@ const Page: React.FC = () => {
       formData.append("city", roomData.city);
       formData.append("billing", roomData.billing);
       formData.append("description", roomData.description);
-      Array.from(data.pictures).forEach((image) => {
-        formData.append("images", image);
-      });
+      if (imageFiles) {
+        Array.from(imageFiles).forEach((image) => {
+          formData.append("images", image);
+        });
+      }
 
       try {
         setLoading(true);
-        const res: AxiosResponse = await axios.post(
-          "https://194.163.45.154:3120/rooms",
+        const res: AxiosResponse = await axios.patch(
+          `https://194.163.45.154:3120/rooms/${room_id}`,
           formData,
           {
             headers: {
@@ -148,8 +126,8 @@ const Page: React.FC = () => {
             },
           }
         );
-        if (res.status === 201) {
-          toast.success("Room has been added successfully");
+        if (res.status === 200) {
+          toast.success("Room has been updated successfully");
           router.push("/localhost/home");
         }
       } catch (err: any) {
@@ -177,6 +155,7 @@ const Page: React.FC = () => {
       const fileArray = Array.from(files).map((file) =>
         URL.createObjectURL(file)
       );
+      setImageFiles(files);
       setImages((prevImages) => prevImages.concat(fileArray));
       Array.from(files).map((file) => URL.revokeObjectURL(file.toString()));
     }
@@ -186,6 +165,21 @@ const Page: React.FC = () => {
     const res = await axios.get("https://194.163.45.154:3120/cities");
     if (res?.data?.data) {
       setCities(res.data.data);
+    }
+  };
+
+  const getRoom = async (room_id: string) => {
+    const res = await axios.get(
+      `https://194.163.45.154:3120/localhosts/room/${room_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+      }
+    );
+    console.log(res);
+    if (res?.data?.data) {
+      setRoomData(res.data.data);
     }
   };
 
@@ -201,6 +195,7 @@ const Page: React.FC = () => {
         value: "Credit Card",
       },
     ]);
+    getRoom(room_id);
   }, []);
 
   return (
@@ -208,9 +203,9 @@ const Page: React.FC = () => {
       <MaxWidthWrapper>
         <div className="w-full flex justify-center py-4">
           <div className="w-full md:max-w-xl col-span-full lg:col-span-1 flex flex-col bg-white shadow-md rounded-md">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={onSubmit}>
               <div className="px-8 pb-12 pt-12">
-                <h2 className="tracking-tight font-bold text-3xl">Add Room</h2>
+                <h2 className="tracking-tight font-bold text-3xl">Edit Room</h2>
 
                 <div className="w-full h-px bg-zinc-200 my-6" />
 
@@ -421,19 +416,11 @@ const Page: React.FC = () => {
                         <Label>Upload Pictures</Label>
                         <Input
                           id="pictures"
-                          {...register("pictures", {
-                            required: "Pictures are required",
-                          })}
                           type="file"
                           accept="image/*"
                           multiple
                           onChange={handleImageUpload}
                         />
-                        {errors.pictures && (
-                          <p className="text-red-600 text-xs italic">
-                            {errors.pictures.message}
-                          </p>
-                        )}
                       </div>
 
                       <div className="image-preview image-container">
@@ -444,6 +431,15 @@ const Page: React.FC = () => {
                             alt={`Uploaded Preview ${index + 1}`}
                           />
                         ))}
+                        {images?.length < 1 &&
+                          roomData?.pic_urls?.length > 0 &&
+                          roomData?.pic_urls?.map((item, index) => (
+                            <img
+                              key={index}
+                              src={`https://194.163.45.154:3120/uploads/${item}`}
+                              alt={`Uploaded Preview ${index + 1}`}
+                            />
+                          ))}
                       </div>
                     </div>
                   </div>

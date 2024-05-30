@@ -35,7 +35,7 @@ const Page = () => {
       try {
         setLoading(true);
         const res: AxiosResponse = await axios.patch(
-          "http://194.163.45.154:3120/localhosts/forgot-password",
+          "https://194.163.45.154:3120/localhosts/forgot-password",
           { email }
         );
         if (res.status === 200) {
