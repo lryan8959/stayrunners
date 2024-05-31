@@ -66,4 +66,11 @@ export class RoomsService {
       .populate('city');
     return rooms;
   }
+
+  async getLocalhostRoomsForCustomer(id) {
+    const rooms = this.roomModel
+      .find({ localhost: id, available: true, deleted: false })
+      .populate('city');
+    return rooms;
+  }
 }

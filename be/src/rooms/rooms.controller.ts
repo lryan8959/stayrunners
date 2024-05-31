@@ -118,7 +118,7 @@ export class RoomsController {
       filenames,
       updateRoomDto,
     );
-    
+
     if (room) {
       return res.status(200).json({
         success: true,
@@ -172,6 +172,30 @@ export class RoomsController {
       city_id,
       localhost,
     );
+    if (rooms?.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Rooms not found',
+      });
+    } else if (rooms?.length > 0) {
+      return res.status(200).json({
+        success: true,
+        data: rooms,
+      });
+    } else {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  @Get('rooms-details')
+  @UseGuards(JwtAuthGuard)
+  async getLocalhostAvailableRooms(@Req() req: Request, @Res() res) {
+    const localhost: any = (req.user as any).localhost;
+    const rooms =
+      await this.roomsService.getLocalhostRoomsForCustomer(localhost);
     if (rooms?.length === 0) {
       return res.status(404).json({
         success: false,
