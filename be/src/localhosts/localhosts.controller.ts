@@ -202,10 +202,7 @@ export class LocalhostsController {
     const isValid = mongoose.Types.ObjectId.isValid(room_id);
     if (!isValid) throw new HttpException('Room not found', 400);
     const localhost: any = (req.user as any).id;
-    const room = await this.localhostsService.getRoom(
-      room_id,
-      localhost,
-    );
+    const room = await this.localhostsService.getRoom(room_id, localhost);
     if (room === 'Room not found') {
       throw new HttpException('Room not found', 400);
     } else if (room) {
@@ -227,10 +224,7 @@ export class LocalhostsController {
     const isValid = mongoose.Types.ObjectId.isValid(room_id);
     if (!isValid) throw new HttpException('Room not found', 400);
     const localhost: any = (req.user as any).id;
-    const room = await this.localhostsService.deleteRoom(
-      room_id,
-      localhost,
-    );
+    const room = await this.localhostsService.deleteRoom(room_id, localhost);
     if (room === 'Room not found') {
       throw new HttpException('Room not found', 400);
     } else if (room) {
@@ -252,5 +246,67 @@ export class LocalhostsController {
     return res.status(200).json({
       fulfillmentText: `Received ==${intent}== in the backend`,
     });
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async myProfile(@Req() req: Request, @Res() res: Response) {
+    const localhost: any = (req.user as any).id;
+    const user = await this.localhostsService.getMyProfile(localhost);
+    if (user) {
+      return res.status(200).json({
+        data: user,
+      });
+    } else {
+      throw new HttpException('Internal server error', 500);
+    }
+  }
+
+  @Patch()
+  @UseGuards(JwtAuthGuard)
+  async updateProfile(
+    @Req() req: Request,
+    @Body() body: any,
+    @Res() res: Response,
+  ) {
+    const localhost: any = (req.user as any).id;
+    const user = await this.localhostsService.updateProfile(localhost, body);
+    if (user === 'User not found') {
+      throw new HttpException('User not found', 404);
+    } else if (user) {
+      return res.status(200).json({
+        data: user,
+      });
+    } else {
+      throw new HttpException('Internal server error', 500);
+    }
+  }
+
+  @Patch('/change-password')
+  @UseGuards(JwtAuthGuard)
+  async changePassword(
+    @Req() req: Request,
+    @Body() body: any,
+    @Res() res: Response,
+  ) {
+    const localhost: any = (req.user as any).id;
+    if (body.password.length < 8) {
+      throw new HttpException('Password contains atleast 8 characters', 400);
+    }
+
+    if (body.password != body.confirmPassword) {
+      throw new HttpException('Passwords do not match', 400);
+    }
+
+    const user = await this.localhostsService.changePassword(localhost, body);
+    if (user === 'User not found') {
+      throw new HttpException('User not found', 404);
+    } else if (user) {
+      return res.status(200).json({
+        data: user,
+      });
+    } else {
+      throw new HttpException('Internal server error', 500);
+    }
   }
 }
