@@ -9,6 +9,9 @@ import {
 } from 'src/schemas/RoomRequests.schema';
 import { Room, RoomSchema } from 'src/schemas/Room.schema';
 import { EmailService } from 'src/utils/EmailService';
+import { Customer, CustomerSchema } from 'src/schemas/Customer.schema';
+import { Bid, BidSchema } from 'src/schemas/Bid.schema';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -16,7 +19,13 @@ import { EmailService } from 'src/utils/EmailService';
       { name: Localhost.name, schema: LocalhostSchema },
       { name: RoomRequests.name, schema: RoomRequestsSchema },
       { name: Room.name, schema: RoomSchema },
+      { name: Customer.name, schema: CustomerSchema },
+      { name: Bid.name, schema: BidSchema },
     ]),
+    JwtModule.register({
+      secret: 'secretKey',
+      signOptions: { expiresIn: '1d' },
+    }),
   ],
   providers: [LocalhostsService, EmailService],
   controllers: [LocalhostsController],

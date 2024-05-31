@@ -1,3 +1,4 @@
+import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -10,14 +11,19 @@ import { RoomRequests } from 'src/schemas/RoomRequests.schema';
 import { Room } from 'src/schemas/Room.schema';
 import { EmailService } from 'src/utils/EmailService';
 import { ForgotPasswordLocalhostDto } from './dtos/ForgotPasswordLocalhost.dto';
+import { Customer } from 'src/schemas/Customer.schema';
+import { Bid } from 'src/schemas/Bid.schema';
 
 @Injectable()
 export class LocalhostsService {
   constructor(
+    private jwtService: JwtService,
     @InjectModel(Localhost.name) private localhostModel: Model<Localhost>,
     @InjectModel(RoomRequests.name)
     private roomRequestsModel: Model<RoomRequests>,
     @InjectModel(Room.name) private roomModel: Model<Room>,
+    @InjectModel(Customer.name) private customerModel: Model<Customer>,
+    @InjectModel(Bid.name) private bidModel: Model<Bid>,
     private emailService: EmailService,
   ) {}
 
@@ -248,8 +254,66 @@ export class LocalhostsService {
           available: true,
         })
         .exec();
+
+      const customerBid = await this.bidModel
+        .findOne({
+          _id: id,
+        })
+        .exec();
+
+      const customer = await this.customerModel
+        .findOne({
+          _id: customerBid.customer,
+        })
+        .exec();
+
+      let localh = await this.localhostModel
+        .findOne({
+          _id: localhost,
+        })
+        .exec();
+
+      const payload = {
+        userRole: 'customer',
+        bid: id,
+        localhost,
+      };
+      const accessToken = this.jwtService.sign(payload);
+
+      this.emailService.sendEmail(
+        customer.email,
+        'A New Room Request - Last Minute Booking',
+        `
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Request Accepted</title>
+          </head>
+          <body>
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                  <h2>Request Accepted</h2>
+                  <p>Hello,</p>
+                  <p>A Last Minute Local Host has accepted 
+                  your Request:</p>
+                  <ul>
+                      <li><strong>Localhost Name:</strong> ${localh.name}</li>
+                  </ul>
+                  <a href="http://localhost:3003/customer/negotiate?token=${accessToken}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none;">Negotiate</a>
+                  <p>If you have any questions or concerns, please contact us.</p>
+                  <p>Thank you!</p>
+              </div>
+          </body>
+          </html>
+
+        `,
+      );
+
+      return { bid: id, accepted: true, roomsCount: rooms.length, rooms };
     }
-    return { bid: id, accepted: true, roomsCount: rooms.length, rooms };
+
+    return false;
   }
 
   async changeRoomAvailability(id, localhost) {
