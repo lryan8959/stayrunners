@@ -119,6 +119,19 @@ const Page = () => {
               Add Room
             </Link>
           </div>
+          <div className="ml-4">
+            <Link
+              href="/localhost/profile"
+              className={buttonVariants({
+                size: "sm",
+                variant: "secondary",
+                className:
+                  "sm:flex items-center gap-1 bg-gray-500 text-white hover:text-black",
+              })}
+            >
+              Profile
+            </Link>
+          </div>
         </div>
         <div className="card-container py-4">
           {myRooms?.length > 0 ? (
