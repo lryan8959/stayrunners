@@ -167,7 +167,12 @@ export class LocalhostsService {
     localhost.code_verified_at = new Date();
     localhost.password = hashedPassword;
     await localhost.save();
-    return { _id: localhost._id, name: localhost.name, code_verified: true, password };
+    return {
+      _id: localhost._id,
+      name: localhost.name,
+      code_verified: true,
+      password,
+    };
   }
 
   async resendVerificationCode(id) {
@@ -273,7 +278,7 @@ export class LocalhostsService {
       .findOne({
         _id: id,
         localhost,
-        deleted: false
+        deleted: false,
       })
       .exec();
 
@@ -295,7 +300,7 @@ export class LocalhostsService {
       .findOne({
         _id: id,
         localhost,
-        deleted: false
+        deleted: false,
       })
       .exec();
 
@@ -304,6 +309,69 @@ export class LocalhostsService {
     }
 
     return room;
-    
+  }
+
+  async getMyProfile(localhost) {
+    const user = await this.localhostModel
+      .findOne({
+        _id: localhost,
+        code_verified: true,
+      })
+      .exec();
+
+    if (!user) {
+      return 'User not found';
+    }
+
+    return {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      city: user.city,
+    };
+  }
+
+  async updateProfile(localhost, data) {
+    const user = await this.localhostModel
+      .findOne({
+        _id: localhost,
+        code_verified: true,
+      })
+      .exec();
+
+    if (!user) {
+      return 'User not found';
+    }
+
+    user.name = data.name;
+    user.city = data.city;
+    user.updated_at = new Date();
+    const saved = await user.save();
+    if (saved) {
+      return { localhost };
+    }
+    return false;
+  }
+
+  async changePassword(localhost, data) {
+    const user = await this.localhostModel
+      .findOne({
+        _id: localhost,
+        code_verified: true,
+      })
+      .exec();
+
+    if (!user) {
+      return 'User not found';
+    }
+
+    const hashedPassword = hashPassword(data.password);
+    user.password = hashedPassword;
+    user.updated_at = new Date();
+    const saved = await user.save();
+    if (saved) {
+      return { localhost };
+    }
+    return false;
   }
 }
