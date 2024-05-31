@@ -122,11 +122,12 @@ const Page = () => {
           <div className="ml-4">
             <Link
               href="/localhost/profile"
+              style={{ background: "#4b5563" }}
               className={buttonVariants({
                 size: "sm",
                 variant: "secondary",
                 className:
-                  "sm:flex items-center gap-1 bg-gray-500 text-white hover:text-black",
+                  "sm:flex items-center gap-1 text-white hover:text-black",
               })}
             >
               Profile

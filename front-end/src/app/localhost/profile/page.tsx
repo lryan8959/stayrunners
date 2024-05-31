@@ -421,12 +421,12 @@ const Page: React.FC = () => {
                 <div className="w-full h-full flex justify-end items-center">
                   <div className="w-full flex justify-center gap-6 items-center">
                     <Button
-                      disabled={loading}
+                      disabled={loading2}
                       type="submit"
                       size="sm"
                       className="text-sm px-10"
                     >
-                      {loading ? (
+                      {loading2 ? (
                         <Loader2 className="w-3 h-3 animate-spin" />
                       ) : (
                         "Save"
