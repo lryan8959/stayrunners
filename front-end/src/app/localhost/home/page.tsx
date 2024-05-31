@@ -37,7 +37,6 @@ interface Room {
 
 const Page = () => {
   const [myRooms, setMyRooms] = useState<Room[]>([]);
-  const [stateUpdate, setStateUpdate] = useState<boolean>(false);
 
   const getMyRooms = async () => {
     const res = await axios.get("https://194.163.45.154:3120/rooms", {
@@ -127,7 +126,7 @@ const Page = () => {
                 size: "sm",
                 variant: "secondary",
                 className:
-                  "sm:flex items-center gap-1 text-white hover:text-black",
+                  "sm:flex items-center gap-1 text-black hover:text-black",
               })}
             >
               Profile
