@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import axios, { AxiosResponse } from "axios";
 import Chat from "@/components/Chat";
 
-const Page = () => {
+const NegotiatePage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const id = searchParams.get("id") || "";
@@ -49,7 +49,7 @@ const Page = () => {
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
           <h3 className="font-semibold text-xl">Loading your order...</h3>
-          <p>This won't take long.</p>
+          <p>This won&apos;t take long.</p>
         </div>
       </div>
     );
@@ -109,5 +109,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <NegotiatePage />
+  </Suspense>
+);
 
 export default Page;

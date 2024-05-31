@@ -100,7 +100,7 @@ const Page = () => {
   return (
     <MaxWidthWrapper>
       <div className="w-full flex justify-center py-20">
-        <div className="w-full md:max-w-xl col-span-full lg:col-span-1 flex flex-col bg-white shadow-md rounded-md">
+        <div className="w-full md:max-w-xl col-span-full lg:col-span-1 flex flex-col bg-white shadow-md rounded-md pb-16">
           <ScrollArea className="relative flex-1 overflow-auto">
             <div
               aria-hidden="true"
@@ -152,7 +152,7 @@ const Page = () => {
 
           <div className="w-full px-8 bg-white pb-12 rounded-md">
             <div className="w-full h-full flex justify-end items-center">
-              <div className="w-full flex justify-center gap-6 items-center">
+              <div className="w-full flex justify-center gap-1 items-center">
                 {/* <p className="font-medium whitespace-nowrap">
               {formatPrice(
                 (BASE_PRICE +
@@ -190,20 +190,24 @@ const Page = () => {
                 )}
               </div>
             </div>
-            <div className="flex justify-center mt-2">
-              <p className="text-sm mr-2">Did not receive a code?</p>
-              {seconds < 1 ? (
-                <p
-                  onClick={handleResendCode}
-                  className="text-sm text-blue-700 cursor-pointer underline"
-                >
-                  Resend code
+            <div>
+              <div className="flex justify-center items-center mt-2 flex-col">
+                <p className="text-sm mr-2">
+                  Did not receive a code? Please Check Spam box or
                 </p>
-              ) : (
-                <p className="text-sm text-gray-500 cursor-not-allowed">
-                  Resend code
-                </p>
-              )}
+                {seconds < 1 ? (
+                  <p
+                    onClick={handleResendCode}
+                    className="text-sm text-blue-700 cursor-pointer underline"
+                  >
+                    Resend code
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-500 cursor-not-allowed">
+                    Resend code
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>

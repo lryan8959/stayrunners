@@ -13,12 +13,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { isValidName, isValidEmail, isEmpty } from "../../../utils/validation";
 import { setUserDataInLocalStorage } from "../../../utils/storage";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 interface City {
   _id: string;
@@ -246,7 +247,7 @@ const Page = () => {
 
           <div className="w-full px-8 bg-white pb-12 rounded-md">
             <div className="w-full h-full flex justify-end items-center">
-              <div className="w-full flex justify-center gap-6 items-center">
+              <div className="w-full flex flex-col justify-center gap-6 items-center">
                 {/* <p className="font-medium whitespace-nowrap">
               {formatPrice(
                 (BASE_PRICE +
@@ -260,14 +261,24 @@ const Page = () => {
                   disabled={loading}
                   onClick={handleClick}
                   size="sm"
-                  className="text-sm"
+                  className="text-sm w-1/2"
                 >
                   {loading ? (
                     <Loader2 className="w-3 h-3 animate-spin" />
                   ) : (
-                    "Submit for Verification Email"
+                    "Next"
                   )}
                 </Button>
+                <Link
+                  style={{ width: "50%", fontSize: "14px", lineHeight: "20px" }}
+                  href="/login"
+                  className={buttonVariants({
+                    size: "sm",
+                    variant: "secondary",
+                  })}
+                >
+                  Login
+                </Link>
               </div>
             </div>
             <div className="flex justify-center">

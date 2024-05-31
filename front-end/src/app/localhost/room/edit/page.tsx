@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import axios, { AxiosResponse } from "axios";
 import { useSearchParams } from "next/navigation";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
@@ -30,7 +30,7 @@ interface Payment_Option {
   value: string;
 }
 
-const Page: React.FC = () => {
+const EditPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const room_id = searchParams.get("room_id") || "";
@@ -479,5 +479,11 @@ const Page: React.FC = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditPage />
+  </Suspense>
+);
 
 export default Page;

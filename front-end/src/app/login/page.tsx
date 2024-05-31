@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { toast } from "react-toastify";
 import { Label } from "@/components/ui/label";
@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import Link from "next/link";
 
-const Page = () => {
+const LoginPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from") || "";
@@ -155,7 +155,7 @@ const Page = () => {
 
           <div className="w-full px-8 bg-white pb-12 rounded-md">
             <div className="w-full h-full flex justify-end items-center">
-              <div className="w-full flex justify-center gap-6 items-center">
+              <div className="w-full flex flex-col justify-center gap-6 items-center">
                 {/* <p className="font-medium whitespace-nowrap">
               {formatPrice(
                 (BASE_PRICE +
@@ -168,7 +168,7 @@ const Page = () => {
                   disabled={loading}
                   onClick={handleClick}
                   size="sm"
-                  className="text-sm px-10"
+                  className="text-sm w-1/2"
                 >
                   {loading ? (
                     <Loader2 className="w-3 h-3 animate-spin" />
@@ -176,6 +176,20 @@ const Page = () => {
                     "Login"
                   )}
                 </Button>
+                <Link
+                  style={{
+                    width: "50%",
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                  }}
+                  href="/localhost/signup"
+                  className={buttonVariants({
+                    size: "sm",
+                    variant: "secondary",
+                  })}
+                >
+                  Become a localhost
+                </Link>
               </div>
             </div>
             <div className="flex justify-center items-center py-2">
@@ -192,5 +206,11 @@ const Page = () => {
     </MaxWidthWrapper>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <LoginPage />
+  </Suspense>
+);
 
 export default Page;

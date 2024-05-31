@@ -132,64 +132,68 @@ const Page = () => {
                       height={300}
                     />
                   </div>
-                  <CardHeader>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <FileText className="text-gray-500" size={20} />
-                      <CardDescription style={{ marginLeft: "8px" }}>
-                        {item?.description}
-                      </CardDescription>
-                    </div>
-                  </CardHeader>
+                  <div>
+                    <CardHeader>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <FileText className="text-gray-500" size={20} />
+                        <CardDescription style={{ marginLeft: "8px" }}>
+                          {item?.description}
+                        </CardDescription>
+                      </div>
+                    </CardHeader>
 
-                  <CardContent>
-                    <div className="flex mb-4">
-                      <Switch
-                        checked={item?.available}
-                        onCheckedChange={() => onCheckedHandle(item)}
-                      />
-                      <p
-                        className={`text-sm ml-2 ${
-                          item?.available ? "text-green-600" : "text-red-600"
-                        }`}
-                      >
-                        {item?.available ? "Available" : "Not Available"}
-                      </p>
-                    </div>
+                    <CardContent>
+                      <div className="flex mb-4">
+                        <Switch
+                          checked={item?.available}
+                          onCheckedChange={() => onCheckedHandle(item)}
+                        />
+                        <p
+                          className={`text-sm ml-2 ${
+                            item?.available ? "text-green-600" : "text-red-600"
+                          }`}
+                        >
+                          {item?.available ? "Available" : "Not Available"}
+                        </p>
+                      </div>
 
-                    <div className="flex">
-                      <p className="text-sm mr-2 text-gray-500">
-                        Minimum price per night:
-                      </p>
-                      <p className="text-sm">{item?.min_price_per_night}</p>
-                    </div>
-                    <div className="flex">
-                      <p className="text-sm mr-2 text-gray-500">
-                        Payment Option:
-                      </p>
-                      <p className="text-sm">{item?.payment_option}</p>
-                    </div>
-                    <div className="flex">
-                      <p className="text-sm mr-2 text-gray-500">City:</p>
-                      <p className="text-sm">{item?.city?.city_name}</p>
-                    </div>
-                    <div className="flex">
-                      <p className="text-sm mr-2 text-gray-500">Billing:</p>
-                      <p className="text-sm">{item?.billing}</p>
-                    </div>
-                    <div className="mt-4">
-                      <Link href={"/localhost/room/edit?room_id=" + item?._id}>
-                        <Button variant="secondary">Edit</Button>
-                      </Link>
+                      <div className="flex">
+                        <p className="text-sm mr-2 text-gray-500">
+                          Minimum price per night:
+                        </p>
+                        <p className="text-sm">{item?.min_price_per_night}</p>
+                      </div>
+                      <div className="flex">
+                        <p className="text-sm mr-2 text-gray-500">
+                          Payment Option:
+                        </p>
+                        <p className="text-sm">{item?.payment_option}</p>
+                      </div>
+                      <div className="flex">
+                        <p className="text-sm mr-2 text-gray-500">City:</p>
+                        <p className="text-sm">{item?.city?.city_name}</p>
+                      </div>
+                      <div className="flex">
+                        <p className="text-sm mr-2 text-gray-500">Billing:</p>
+                        <p className="text-sm">{item?.billing}</p>
+                      </div>
+                      <div className="mt-4">
+                        <Link
+                          href={"/localhost/room/edit?room_id=" + item?._id}
+                        >
+                          <Button variant="secondary">Edit</Button>
+                        </Link>
 
-                      <Button
-                        style={{ marginLeft: "8px" }}
-                        variant="destructive"
-                        onClick={() => deleteRoom(item)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </CardContent>
+                        <Button
+                          style={{ marginLeft: "8px" }}
+                          variant="destructive"
+                          onClick={() => deleteRoom(item)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </div>
                 </Card>
               </div>
             ))
