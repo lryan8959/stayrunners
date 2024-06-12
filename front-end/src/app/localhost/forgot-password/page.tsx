@@ -12,6 +12,7 @@ import { isValidEmail } from "../../../utils/validation";
 import { setUserDataInLocalStorage } from "../../../utils/storage";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { baseUrl } from "@/config/const";
 
 const Page = () => {
   const router = useRouter();
@@ -35,7 +36,7 @@ const Page = () => {
       try {
         setLoading(true);
         const res: AxiosResponse = await axios.patch(
-          "https://194.163.45.154:3120/localhosts/forgot-password",
+          baseUrl+"/localhosts/forgot-password",
           { email }
         );
         if (res.status === 200) {

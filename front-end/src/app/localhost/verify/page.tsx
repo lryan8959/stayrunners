@@ -19,6 +19,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Loader2 } from "lucide-react";
+import { baseUrl } from "@/config/const";
 
 const Page = () => {
   const userData = getUserDataFromLocalStorage();
@@ -36,7 +37,7 @@ const Page = () => {
       setSeconds(60);
       setLoading(true);
       const res = await axios.patch(
-        `https://194.163.45.154:3120/localhosts/resend-verification-code/${userData?.id}`
+        `${baseUrl}/localhosts/resend-verification-code/${userData?.id}`
       );
 
       if (res.status === 200) {
@@ -60,7 +61,7 @@ const Page = () => {
       try {
         setLoading2(true);
         const res = await axios.patch(
-          `https://194.163.45.154:3120/localhosts/verify/${userData?.id}`,
+          `${baseUrl}/localhosts/verify/${userData?.id}`,
           {
             verification_code: parseInt(verificationCode, 10),
           }

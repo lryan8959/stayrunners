@@ -14,6 +14,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 
 import axios, { AxiosResponse } from "axios";
+import { baseUrl } from "@/config/const";
 
 interface Room {
   _id: string;
@@ -39,7 +40,7 @@ const Page = () => {
   const [myRooms, setMyRooms] = useState<Room[]>([]);
 
   const getMyRooms = async () => {
-    const res = await axios.get("https://194.163.45.154:3120/rooms", {
+    const res = await axios.get(baseUrl+"/rooms", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
       },
@@ -51,7 +52,7 @@ const Page = () => {
 
   const changeRoomAvailability = async (room_id: string) => {
     await axios.patch(
-      `https://194.163.45.154:3120/localhosts/room-availability/${room_id}`,
+      `${baseUrl}/localhosts/room-availability/${room_id}`,
       {},
       {
         headers: {
@@ -63,7 +64,7 @@ const Page = () => {
 
   const deleteRoomAPI = async (room_id: string) => {
     await axios.delete(
-      `https://194.163.45.154:3120/localhosts/room/${room_id}`,
+      `${baseUrl}/localhosts/room/${room_id}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
@@ -140,7 +141,7 @@ const Page = () => {
                 <Card>
                   <div>
                     <img
-                      src={`https://194.163.45.154:3120/uploads/${item?.pic_urls[0]}`}
+                      src={`${baseUrl}/uploads/${item?.pic_urls[0]}`}
                       alt="room"
                       height={300}
                     />

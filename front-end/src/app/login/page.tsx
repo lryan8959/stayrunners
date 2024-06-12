@@ -14,6 +14,7 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { baseUrl } from "@/config/const";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -66,7 +67,7 @@ const LoginPage = () => {
       try {
         setLoading(true);
         const res: AxiosResponse = await axios.post(
-          "https://194.163.45.154:3120/auth/login",
+          baseUrl+"/auth/login",
           {
             username: localhost.email,
             password: localhost.password,

@@ -16,6 +16,7 @@ import {
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
+import { baseUrl } from "@/config/const";
 
 interface Room {
   _id: string;
@@ -48,7 +49,7 @@ const NegotiatePage = () => {
 
   const getRooms = async (token: string) => {
     const res = await axios.get(
-      "https://194.163.45.154:3120/rooms/rooms-details",
+      baseUrl+"/rooms/rooms-details",
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -99,7 +100,7 @@ const NegotiatePage = () => {
                 <Card>
                   <div>
                     <img
-                      src={`https://194.163.45.154:3120/uploads/${item?.pic_urls[0]}`}
+                      src={`${baseUrl}/uploads/${item?.pic_urls[0]}`}
                       alt="room"
                       height={300}
                     />

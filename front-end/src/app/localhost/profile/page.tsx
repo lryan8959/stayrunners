@@ -18,6 +18,7 @@ import { isEmpty } from "@/utils/validation";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { baseUrl } from "@/config/const";
 
 interface City {
   _id: string;
@@ -81,7 +82,7 @@ const Page: React.FC = () => {
       try {
         setLoading(true);
         const res: AxiosResponse = await axios.patch(
-          "https://194.163.45.154:3120/localhosts",
+          baseUrl+"/localhosts",
           data,
           {
             headers: {
@@ -144,7 +145,7 @@ const Page: React.FC = () => {
       try {
         setLoading2(true);
         const res: AxiosResponse = await axios.patch(
-          "https://194.163.45.154:3120/localhosts/change-password",
+          baseUrl+"/localhosts/change-password",
           data,
           {
             headers: {
@@ -181,14 +182,14 @@ const Page: React.FC = () => {
   };
 
   const getAllCities = async () => {
-    const res = await axios.get("https://194.163.45.154:3120/cities");
+    const res = await axios.get(baseUrl+"/cities");
     if (res?.data?.data) {
       setCities(res.data.data);
     }
   };
 
   const getMyProfile = async () => {
-    const res = await axios.get("https://194.163.45.154:3120/localhosts", {
+    const res = await axios.get(baseUrl+"/localhosts", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
       },

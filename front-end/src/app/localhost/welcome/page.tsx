@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import axios, { AxiosResponse } from "axios";
 import { useState, useTransition } from "react";
+import { baseUrl } from "@/config/const";
 
 const Page = () => {
   const userData = getUserDataFromLocalStorage();
@@ -40,7 +41,7 @@ const Page = () => {
     try {
       setLoading(true);
       const res: AxiosResponse = await axios.post(
-        "https://194.163.45.154:3120/auth/login",
+        baseUrl+"/auth/login",
         {
           username: userData?.email,
           password: userData?.password,

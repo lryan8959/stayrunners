@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios, { AxiosResponse } from "axios";
 import Chat from "@/components/Chat";
+import { baseUrl } from "@/config/const";
 
 const NegotiatePage = () => {
   const searchParams = useSearchParams();
@@ -19,7 +20,7 @@ const NegotiatePage = () => {
 
   const acceptRoomRequest = async (id: string) => {
     const res: AxiosResponse = await axios.patch(
-      `https://194.163.45.154:3120/localhosts/accept-room-request/${id}`,
+      `${baseUrl}/localhosts/accept-room-request/${id}`,
       {},
       {
         headers: {

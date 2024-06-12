@@ -18,9 +18,11 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ChatGateway } from './chat/chat.gateway';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { chatResponseModule } from './chatResponse/chatResonse.module';
 
 @Module({
   imports: [
+    chatResponseModule,
     UserModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.development'],

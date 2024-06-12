@@ -25,6 +25,7 @@ import {
 } from "@/utils/validation";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { baseUrl } from "@/config/const";
 
 interface City {
   _id: string;
@@ -164,7 +165,7 @@ export default function Home() {
       try {
         setLoading(true);
         const res: AxiosResponse = await axios.post(
-          "https://194.163.45.154:3120/customers/create-bid",
+          baseUrl+"/customers/create-bid",
           bidData
         );
         if (res.status === 201) {
@@ -182,7 +183,7 @@ export default function Home() {
   };
 
   const getAllCities = async () => {
-    const res = await axios.get("https://194.163.45.154:3120/cities");
+    const res = await axios.get(baseUrl+"/cities");
     if (res?.data?.data) {
       setCities(res.data.data);
     }

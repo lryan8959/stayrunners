@@ -20,6 +20,7 @@ import { setUserDataInLocalStorage } from "../../../utils/storage";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { baseUrl } from "@/config/const";
 
 interface City {
   _id: string;
@@ -83,7 +84,7 @@ const Page = () => {
       try {
         setLoading(true);
         const res: AxiosResponse = await axios.post(
-          "https://194.163.45.154:3120/localhosts",
+          baseUrl+"/localhosts",
           localhost
         );
         if (res.status === 201) {
@@ -114,7 +115,7 @@ const Page = () => {
   };
 
   const getAllCities = async () => {
-    const res = await axios.get("https://194.163.45.154:3120/cities");
+    const res = await axios.get(baseUrl+"/cities");
     if (res?.data?.data) {
       setCities(res.data.data);
     }

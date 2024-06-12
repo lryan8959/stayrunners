@@ -20,6 +20,7 @@ import { isEmpty, isValidPrice } from "@/utils/validation";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { baseUrl } from "@/config/const";
 
 interface IFormInput {
   min_price_per_night: number;
@@ -140,7 +141,7 @@ const Page: React.FC = () => {
       try {
         setLoading(true);
         const res: AxiosResponse = await axios.post(
-          "https://194.163.45.154:3120/rooms",
+          baseUrl+"/rooms",
           formData,
           {
             headers: {
@@ -183,7 +184,7 @@ const Page: React.FC = () => {
   };
 
   const getAllCities = async () => {
-    const res = await axios.get("https://194.163.45.154:3120/cities");
+    const res = await axios.get(baseUrl+"/cities");
     if (res?.data?.data) {
       setCities(res.data.data);
     }
