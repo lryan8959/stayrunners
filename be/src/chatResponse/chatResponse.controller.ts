@@ -10,20 +10,30 @@ export class WebhookController {
     // Parse request body
     const intent = requestBody.queryResult.intent.displayName;
 
-    if (intent === 'Default Welcome Intent') {
+    if (intent === 'customer.price') {
       // Handle default welcome intent
       const response = {
-        fulfillmentText: 'Welcome to our chatbot! How can I assist you today?',
+        fulfillmentText: 'I am offering $60. Would you be willing to accept this price?'
+        // fulfillmentMessages: [
+        //   {
+        //     text: {
+        //       text: [
+        //         'Welcome to our chatbot! How can I assist you today??'
+        //       ]
+        //     }
+        //   }
+        // ]
       };
+   
       return response;
-    } else {
+    } else if (intent === 'localhost.price') {
       // Handle other intents
       // Process intent and parameters
       // Perform necessary actions based on the intent and parameters
 
       // Construct response
       const response = {
-        fulfillmentText: 'This is a sample response from NestJS backend.',
+        fulfillmentText: 'I can paying $45. Would you be willing to accept this price?'
       };
 
       // Send response to Dialogflow
