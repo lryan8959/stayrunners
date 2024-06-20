@@ -17,7 +17,8 @@ export class WebhookController {
       console.log(price);
 
       const response = {
-       // fulfillmentText: `I can paying $${price}. Would you be willing to accept this price?`,
+        responseId: "9f95201b-f127-45dd-90ce-ba9935410c90-d2a79bec",
+        fulfillmentText: `I can paying $${price}. Would you be willing to accept this price?`,
 
         // outputContexts": [
         //     {
