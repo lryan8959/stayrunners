@@ -36,7 +36,7 @@ export class UserService {
       .findOne({ _id: customerID })
       .exec();
     console.log('customerData', customerData);
-    return { customerData, userRole };
+    return { customerData, userRole , bitId};
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
