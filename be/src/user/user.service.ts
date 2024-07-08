@@ -13,9 +13,20 @@ export class UserService {
     //MODAL NAME
     return `This action returns all user`;
   }
+  //get token from params and find customer infomations from db
+  async findOne(bitId: any, userRole: any) {
+    console.log('id------>', bitId);
+    const customerBid = await this.bidModel.findOne({ _id: bitId }).exec();
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+    console.log('db data---->', customerBid);
+
+    const customerID = customerBid.customer.toString();
+    console.log('db id---->', customerID);
+    const customerData = await this.customerModel
+      .findOne({ _id: customerID })
+      .exec();
+    console.log('customerData', customerData);
+    return { customerData ,userRole};
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
