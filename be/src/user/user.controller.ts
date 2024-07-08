@@ -17,8 +17,8 @@ export class UserController {
   //   return this.userService.findAll();
   // }
 
-  @Get('User-details')
   // @UseGuards(JwtAuthGuard)
+  @Get('User-details')
   async getUserDetails(@Req() req: Request, @Res() res) {
     const token = req.query.token as string;
     console.log('Token from query params:', token);
