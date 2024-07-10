@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import axios, { AxiosResponse } from "axios";
 import Chat from "@/components/Chat";
 import { baseUrl } from "@/config/const";
+import ChatBot from "@/components/ChatBot";
+import * as jwt from 'jsonwebtoken';
 
 const NegotiatePage = () => {
   const searchParams = useSearchParams();
@@ -41,7 +43,49 @@ const NegotiatePage = () => {
       if (token && id) {
         acceptRoomRequest(id);
       }
+
     }
+    
+if(typeof localStorage !== "undefined"){
+  const token = localStorage.getItem("jwtToken");
+  if(token){
+    const decodedToken = jwt.decode(token);
+    console.log("decodedtoken",decodedToken);
+
+    if(decodedToken){
+    // //@ts-ignore
+    //   const userRole = decodedToken?.userRole;
+    //     //@ts-ignore
+    //   const email = decodedToken?.email;
+    //     //@ts-ignore
+    //   const idd = decodedToken?.id;
+    //   const bitId = id
+    //   console.log(userRole,email,idd, bitId);
+
+    
+  
+        const userData = {
+          //@ts-ignore
+          id: decodedToken?.id,
+          name: "",
+           //@ts-ignore
+          email: decodedToken?.email,
+          city: "",
+           //@ts-ignore
+          userRole: decodedToken?.userRole,
+          bitId : id
+        };
+    
+    console.log("Customer_Data111111",userData);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("userData", JSON.stringify(userData));
+    }
+    
+      // }
+      
+    }
+  }
+}
   }, []);
 
   if (data === undefined) {
@@ -76,7 +120,11 @@ const NegotiatePage = () => {
           {/* <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
             Negotiate Page
           </h1> */}
-          <Chat />
+          {/* <Chat /> */}
+
+          <ChatBot />
+          {/* < TestChat/> */}
+
           {/* <p className="mt-2 text-base text-zinc-500">
             A Local Host will be in touch.
           </p> */}

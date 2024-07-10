@@ -17,6 +17,9 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { baseUrl } from "@/config/const";
+import ChatBot from "@/components/ChatBot";
+import TestChat from "@/components/TestChat";
+
 
 interface Room {
   _id: string;
@@ -44,6 +47,42 @@ const NegotiatePage = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const id = searchParams.get("id") || "";
   const token = searchParams.get("token") || "";
+  console.log("token===>",token)
+  // const [customerData, setcustomerData] = useState();
+
+
+const getCustomerData = async (token:string) => {
+  const res = await axios.get(
+    baseUrl+"/user/User-details",
+    {
+      params:{
+        token: token,
+      }
+    }
+  );
+  if(res?.data?.customerData && res?.data?.userRole && res?.data?.bitId){
+    
+    const userData = {
+      id: res?.data?.customerData?._id,
+      name: res?.data?.customerData?.name,
+      email: res?.data?.customerData?.email,
+      city: res?.data?.customerData?.city,
+      userRole: res?.data?.userRole,
+      bitId : res?.data?.bitId
+    };
+
+console.log("Customer_Data",userData);
+if (typeof window !== "undefined") {
+  localStorage.setItem("userData", JSON.stringify(userData));
+}
+
+  }
+};
+
+useEffect(() => {
+  getCustomerData(token);
+}), [];
+// console.log("rercord==========>", customerdata);
 
   const data = {};
 
@@ -91,7 +130,9 @@ const NegotiatePage = () => {
 
   return (
     <div className="bg-slate-50 grainy-light">
-      <Chat />
+      {/* <Chat /> */}
+{/* < TestChat/> */}
+      <ChatBot />
       <MaxWidthWrapper>
         <div className="card-container py-4">
           {rooms?.length > 0 ? (
