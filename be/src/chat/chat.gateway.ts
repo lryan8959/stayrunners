@@ -74,8 +74,16 @@ const MESSAGES = [
     DO NOT ADD EXTRA INFORMATION.
     MAKE SURE THE REPLY IS SHORT AND CONCISE.
     Do not reply of the topic.
-  
+    If the Accepted message is from Owner you send confirmation message and ask to please confirm this Deal to customer and when the customer confirm
+    the deal then, send completed message to both [owner] & [customer] in this format , and vice versa.
+
+
+    
+   
     `,
+    //    make sure that if you send completed message in first line you send receiver side and then sender side.
+    // make sure that after order is completed, make shure that [customer] will not send message to [owner], you just reply to [customer] "We Apologize, this Order is already completed and repeat this message again".
+    // make sure that after order is completed, make shure that [Owner] will not send message to [customer], you just reply to [owner] "We Apologize, this Order is already completed and repeat this message again".
     // If the message is not relevant to the topic from customer or owner then just reply with "I don't understand" and make sure that the reply only 1 sentence and not add extra informations.
   },
   // send the order info to both customer and owner
@@ -87,7 +95,7 @@ const MESSAGES = [
   // {"role": "user", "content": "What's the score of the Warriors game?"}
 ];
 
-const addUserMessage = (new_message, messages_history, role = 'user') => {
+const addUserMessage = (new_message, messages_history, role = 'user') => { 
   messages_history.push({
     role: role,
     content: new_message,
@@ -166,6 +174,7 @@ export class ChatGateway
       console.log('ROOM', ROOM);
 
       const callPostData = async (msg, ROOM) => {
+        try {
         // console.log("Received data:", msg);
         const input = msg;
 
@@ -189,11 +198,38 @@ export class ChatGateway
           const msgRoutePath = lastobj.content.substring(startIdx, endIdx + 1); // extract substring including '[' and ']'
           const AIMessageRoute = msgRoutePath.slice(1, -1);
           console.log('AIMessageRoute----->>', AIMessageRoute); // prints [customer]
-          const AIMessage = lastobj.content.substring(endIdx + 1).trim();
+          let AIMessage = lastobj.content.substring(endIdx + 1).trim();
           console.log('AIMessage----->>', AIMessage);
+
+          // double route messages
+          const  doubleMsgIdx = AIMessage.indexOf('[');
+          const doubleMsgEndIdx = AIMessage.indexOf(']');
+
+         
+
+          if (doubleMsgIdx !== -1 && doubleMsgEndIdx !== -1) {
+            const doubleMsgRoutePath = AIMessage.substring(doubleMsgIdx, doubleMsgEndIdx + 1);
+            const doubleAIMessageRoute = doubleMsgRoutePath.slice(1, -1);
+            console.log('doubleAIMessageRoute----->>', doubleAIMessageRoute); // prints [customer]
+            const doubleAIMessage = AIMessage.substring(doubleMsgEndIdx + 1).trim();
+            console.log('doubleAIMessage----->>', doubleAIMessage);
+
+            // client.emit('message',doubleAIMessage);
+           //extract first Al message
+           const AIMessage1 = AIMessage.substring(0, doubleMsgIdx).trim();
+           console.log('AIMessage1----->>', AIMessage1);
+           AIMessage = AIMessage1;
+
+    setTimeout(() => {
+  client.emit('message',doubleAIMessage);
+    }, 3000);
+
+          }
+
+
+
           const receiverobj = findotherObject(payload.bidId, payload.userRole);
           const receiverRoute = receiverobj.userRole;
-          console.log('receiverRoute----->>', receiverRoute);
 
           if (receiverRoute === AIMessageRoute) {
             console.log('Same Route');
@@ -208,6 +244,11 @@ export class ChatGateway
           // socket.emit("receive-message", "I dont understand what to say");
           client.emit('message', lastobj.content);
         }
+      } catch (error) {
+          // Handle the error here
+    console.error('Error occurred:', error.message);
+    return { error: 'Service Unavailable' };
+      }
       };
       const msg = MESSAGETEXT;
       callPostData(msg, ROOM);
