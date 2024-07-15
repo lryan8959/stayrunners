@@ -69,6 +69,7 @@ const MESSAGES = [
     make sure that conversation is not too long.
     Make sure the reply is short and concise unless it is necessary to answer the question.
     Do not reply anything except the short to the point reply.
+    Do not reply to both [customer] and [owner] except Deal completed message.
     NO NOTES ARE REQUIRED.
     NO SUGGESTIONS ARE REQUIRED.
     DO NOT ADD EXTRA INFORMATION.
