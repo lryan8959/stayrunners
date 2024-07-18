@@ -6,6 +6,10 @@ module.exports = {
       args: './src/main.ts',
       instances: 'max',
       watch: true,
+      ignore_watch: [
+        'uploads', // Ignore changes in the "uploads" directory or route
+      ],
+
       env: {
         NODE_ENV: 'development',
       },
