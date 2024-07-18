@@ -300,7 +300,7 @@ export class LocalhostsService {
                   <ul>
                       <li><strong>Localhost Name:</strong> ${localh.name}</li>
                   </ul>
-                  <a href="http://localhost:3003/customer/negotiate?token=${accessToken}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none;">Negotiate</a>
+                  <a href="https://m59media.com/customer/negotiate?token=${accessToken}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none;">Negotiate</a>
                   <p>If you have any questions or concerns, please contact us.</p>
                   <p>Thank you!</p>
               </div>
