@@ -120,7 +120,7 @@ const Page = () => {
                   <div className="relative flex flex-col gap-1">
                     <h3 className="font-bold pb-4">Check you inbox</h3>
                     <p className="text-sm">Enter the code we just sent to</p>
-                    <p className="text-sm pb-6">shetty@gmail.com</p>
+                    <p className="text-sm pb-6">{userData?.email}</p>
                     <Label>Your verification code</Label>
                     <InputOTP
                       maxLength={6}

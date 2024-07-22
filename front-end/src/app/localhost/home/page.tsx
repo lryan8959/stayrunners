@@ -188,7 +188,7 @@ const Page = () => {
                         <p className="text-sm">{item?.city?.city_name}</p>
                       </div>
                       <div className="flex">
-                        <p className="text-sm mr-2 text-gray-500">Billing:</p>
+                        <p className="text-sm mr-2 text-gray-500">Room Service:</p>
                         <p className="text-sm">{item?.billing}</p>
                       </div>
                       <div className="mt-4">
