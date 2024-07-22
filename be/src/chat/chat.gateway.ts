@@ -113,7 +113,12 @@ const getGroqChatCompletion = async (messages) => {
   });
 };
 
-@WebSocketGateway(5000, { cors: true })
+@WebSocketGateway(5000, {
+
+ cors: true 
+
+ })
+
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {

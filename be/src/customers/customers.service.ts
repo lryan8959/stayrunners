@@ -101,7 +101,7 @@ export class CustomersService {
                         <li><strong>Nights:</strong> ${nights}</li>
                         <li><strong>Special Instructions:</strong> ${special_instructions}</li>
                     </ul>
-                    <a href="http://localhost:3003/negotiate?id=${savedBid._id}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none;">Negotiate Room Stay</a>
+                    <a href="https://m59media.com/negotiate?id=${savedBid._id}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none;">Negotiate Room Stay</a>
                     <p>If you have any questions or concerns, please contact us.</p>
                     <p>Thank you!</p>
                 </div>

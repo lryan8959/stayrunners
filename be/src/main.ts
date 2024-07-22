@@ -18,16 +18,16 @@ async function bootstrap() {
 
   app.enableCors({
     origin: '*', // Allow requests from your Next.js frontend
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
+    //methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    //credentials: true,
   });
 
   app.useGlobalPipes(new ValidationPipe());
-  app.enableCors({
+ /* app.enableCors({
     origin: '*', // Allow requests from your Next.js frontend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
-  });
+  });*/
   await app.listen(3120);
 }
 bootstrap();
