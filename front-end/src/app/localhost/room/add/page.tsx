@@ -376,8 +376,9 @@ const Page: React.FC = () => {
                     <div className="relative flex flex-col gap-1 w-full">
                       <Label
                         className={`${dataErrors?.billing && "text-red-600"}`}
-                      >
-                        Billing
+                                        >
+                      Room Service
+                    
                       </Label>
                       <Input
                         name="billing"
@@ -385,6 +386,7 @@ const Page: React.FC = () => {
                         type="text"
                         value={roomData?.billing}
                         onChange={handleChange}
+                        placeholder="24/7" 
                       />
                       {dataErrors?.billing && (
                         <p className="text-red-600 text-xs italic">

@@ -11,7 +11,11 @@ import { nanoid } from "nanoid";
 import { Message } from "@/validators/message";
 import { Button } from "@/components/ui/button"
 
+<<<<<<< HEAD
 const socket = io('https://soc.m59media.com');
+=======
+const socket = io('https://api.m59media.com');
+>>>>>>> a8b88b4cfe48527302a586ec0a464186de5a213f
 
 const TestChat: React.FC = () => {
   const {

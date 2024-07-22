@@ -76,6 +76,7 @@ export class CustomersService {
       );
       await Promise.all(requestsPromises);
 
+<<<<<<< HEAD
       const emailsPromises = localhosts.map((localhost) =>
         this.emailService.sendEmail(
           localhost.email,
@@ -107,16 +108,56 @@ export class CustomersService {
                 </div>
             </body>
             </html>
+=======
+      const emailsPromises = localhosts.map((localhost) => {
+        try {
+          this.emailService.sendEmail(
+            localhost.email,
+            'A New Room Request - Last Minute Booking',
+            `
+              <!DOCTYPE html>
+              <html lang="en">
+              <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>New Room Request</title>
+              </head>
+              <body>
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                      <h2>A New Room Request</h2>
+                      <p>Hello,</p>
+                      <p>A new room request has been received:</p>
+                      <ul>
+                          <li><strong>Name:</strong> ${CustomerName}</li>
+                          <li><strong>City:</strong> ${findCity.city_name}</li>
+                          <li><strong>Beds:</strong> ${beds}</li>
+                          <li><strong>People:</strong> ${people}</li>
+                          <li><strong>Nights:</strong> ${nights}</li>
+                          <li><strong>Special Instructions:</strong> ${special_instructions}</li>
+                      </ul>
+                      <a href="https://m59media.com/negotiate?id=${savedBid._id}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none;">Negotiate Room Stay</a>
+                      <p>If you have any questions or concerns, please contact us.</p>
+                      <p>Thank you!</p>
+                  </div>
+              </body>
+              </html>
+  
+            `,
+          );
+        } catch (error) {
+          console.log('errpr in sending email', error);
+        }
+      });
+>>>>>>> a8b88b4cfe48527302a586ec0a464186de5a213f
 
-          `,
-        ),
-      );
       await Promise.all(emailsPromises);
+      console.log('createBidDto.email', createBidDto.email);
 
-      await this.emailService.sendEmail(
-        createBidDto.email,
-        'Confirmation - Last Minute Booking',
-        `
+      try {
+        const resp = await this.emailService.sendEmail(
+          createBidDto.email,
+          'Confirmation - Last Minute Booking',
+          `
           <!DOCTYPE html>
           <html lang="en">
           <head>
