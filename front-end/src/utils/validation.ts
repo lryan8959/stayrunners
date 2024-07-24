@@ -26,3 +26,10 @@ export const isEmpty = (value: string) =>
   value === null ||
   (typeof value === "object" && Object.keys(value).length === 0) ||
   (typeof value === "string" && value.trim().length === 0);
+
+
+
+
+export function validatePassword(password:string) {
+    return password.length >= 8;
+}

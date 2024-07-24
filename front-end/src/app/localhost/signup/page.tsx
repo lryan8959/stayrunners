@@ -15,7 +15,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
-import { isValidName, isValidEmail, isEmpty } from "../../../utils/validation";
+import { isValidName, isValidEmail, isEmpty ,validatePassword} from "../../../utils/validation";
 import { setUserDataInLocalStorage } from "../../../utils/storage";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -39,22 +39,34 @@ const Page = () => {
     name: "",
     email: "",
     city: "",
+    password: "",
   });
 
   const [cities, setCities] = useState<City[]>([]);
 
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLocalHost({ ...localhost, [name]: value });
   };
 
+  const handleChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log(e.target.value);
+    
+    setPassword(e.target.value)
+  }
+  // const handleChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setPassword((prevPassword) => ({ ...prevPassword, [name]: value }));
+  // };
   const handleClick = async () => {
     setErrors({
       name: "",
       email: "",
       city: "",
+      password: "",
     });
 
     let hasError = false;
@@ -80,7 +92,17 @@ const Page = () => {
         city: "Please select a valid city",
       });
       hasError = true;
-    } else {
+    } else if (!validatePassword(password)) {
+      toast.error("Please enter a valid password");
+      setErrors({
+        ...errors,
+        password: "Please enter a valid password",
+      });
+      hasError = true;
+    }
+
+    
+    else {
       try {
         setLoading(true);
         const res: AxiosResponse = await axios.post(
@@ -94,7 +116,8 @@ const Page = () => {
             city: localhost?.city,
             id: res?.data?.data?._id,
             code_verified: res?.data?.data?.code_verified,
-            password: "",
+            // password: "",
+            password: password
           };
           setUserDataInLocalStorage(userData);
           if (!res?.data?.code_verified) {
@@ -241,6 +264,29 @@ const Page = () => {
                       </p>
                     )}
                   </div>
+
+
+                  <div className="relative flex flex-col gap-1 w-full">
+                    <Label className={`${errors?.password && "text-red-600"}`}>
+                      Password
+                    </Label>
+                    <Input
+                      name="password"
+                      className={`${errors?.password && "border-red-600"}`}
+                      type="password"
+                      value={password}
+                      onChange={handleChange1}
+                      placeholder="Password"
+                      required
+                    />
+                    {errors?.password && (
+                      <p className="text-red-600 text-xs italic">
+                        {errors?.password}
+                      </p>
+                    )}
+                  </div>
+
+
                 </div>
               </div>
             </div>

@@ -51,6 +51,8 @@ export class LocalhostsController {
     @Body() verifyLocalhostDto: VerifyLocalhostDto,
     @Res() res: Response,
   ) {
+   
+    console.log("PASSWORD--->", verifyLocalhostDto);
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) throw new HttpException('Local does not exist', 400);
     const verified = await this.localhostsService.verifyLocalhost(

@@ -141,6 +141,8 @@ export class LocalhostsService {
   }
 
   async verifyLocalhost(id, verifyLocalhostDto: VerifyLocalhostDto) {
+ 
+    
     const { verification_code } = verifyLocalhostDto;
     const localhost = await this.localhostModel.findById(id).exec();
 
@@ -166,7 +168,9 @@ export class LocalhostsService {
       return 'Verification code has expired';
     }
 
-    const password = generatePassword();
+    // const password = generatePassword();
+    const password = verifyLocalhostDto.Password;
+    
     const hashedPassword = hashPassword(password);
 
     localhost.code_verified = true;

@@ -64,6 +64,7 @@ const Page = () => {
           `${baseUrl}/localhosts/verify/${userData?.id}`,
           {
             verification_code: parseInt(verificationCode, 10),
+            Password : userData?.password
           }
         );
 
