@@ -5,5 +5,5 @@ export class VerifyLocalhostDto {
   @IsNotEmpty()
   verification_code: number;
 
-  Password: string;
+  //Password: string;
 }

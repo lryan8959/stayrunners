@@ -55,6 +55,8 @@ const Page = () => {
   };
 
   const handleClick = async () => {
+    console.log("clicked", userData);
+    
     if (verificationCode?.length !== 6) {
       toast.error("Please enter a valid verification code");
     } else {
@@ -64,7 +66,7 @@ const Page = () => {
           `${baseUrl}/localhosts/verify/${userData?.id}`,
           {
             verification_code: parseInt(verificationCode, 10),
-            Password : userData?.password
+           // Password : userData?.password
           }
         );
 
@@ -77,10 +79,18 @@ const Page = () => {
             code_verified: res?.data?.data?.code_verified,
             password: res?.data?.data?.password,
           });
-
-          startTransition(() => {
-            router.push("/localhost/welcome");
-          });
+if(res?.data?.data?.password == ""){
+  toast.success("Account verified successfully. Please login");
+  startTransition(() => {
+    router.push("/login");
+  });
+}else{
+  toast.success("Account verified successfully. Please reset password");
+  startTransition(() => {
+    router.push("/localhost/Reset-password");
+  });
+}
+         
         }
       } catch (err: any) {
         const errMsg = Array.isArray(err.response.data.message)

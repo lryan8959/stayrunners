@@ -32,6 +32,10 @@ export class LocalhostsController {
     @Body() createLocalhostDto: CreateLocalhostDto,
     @Res() res: Response,
   ) {
+
+console.log("createLocalhostDto--->", createLocalhostDto);
+
+
     const localhost =
       await this.localhostsService.createLocalhost(createLocalhostDto);
     if (localhost === 'Email already exists') {
@@ -53,6 +57,8 @@ export class LocalhostsController {
   ) {
    
     console.log("PASSWORD--->", verifyLocalhostDto);
+    console.log("id--->", id);
+    
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) throw new HttpException('Local does not exist', 400);
     const verified = await this.localhostsService.verifyLocalhost(
@@ -311,4 +317,26 @@ export class LocalhostsController {
       throw new HttpException('Internal server error', 500);
     }
   }
+
+
+
+  @Post('/reset-new-password')
+  async newPassword(
+    @Req() req: Request,
+    @Body() body: any,
+    @Res() res: Response,
+  ) {
+    //const localhost: any = (req.user as any).id;
+    const user = await this.localhostsService.ResetPassword(body.localhost,body.password);
+    if (user === 'User not found') {
+      throw new HttpException('User not found', 404);
+    } else if (user) {
+      return res.status(200).json({
+        data: user,
+      });
+    } else {
+      throw new HttpException('Internal server error', 500);
+    }
+  }
+
 }

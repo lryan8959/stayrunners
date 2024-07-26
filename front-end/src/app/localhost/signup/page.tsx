@@ -33,6 +33,7 @@ const Page = () => {
     name: "",
     email: "",
     city: "",
+    password: ""
   });
 
   const [errors, setErrors] = useState({
@@ -45,22 +46,19 @@ const Page = () => {
   const [cities, setCities] = useState<City[]>([]);
 
   const [loading, setLoading] = useState(false);
-  const [password, setPassword] = useState('');
+  //const [password, setPassword] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLocalHost({ ...localhost, [name]: value });
   };
 
-  const handleChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log(e.target.value);
-    
-    setPassword(e.target.value)
-  }
   // const handleChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = e.target;
-  //   setPassword((prevPassword) => ({ ...prevPassword, [name]: value }));
-  // };
+  //   // console.log(e.target.value);
+    
+  //   setPassword(e.target.value)
+  // }
+
   const handleClick = async () => {
     setErrors({
       name: "",
@@ -92,7 +90,7 @@ const Page = () => {
         city: "Please select a valid city",
       });
       hasError = true;
-    } else if (!validatePassword(password)) {
+    } else if (!validatePassword(localhost?.password)) {
       toast.error("Please enter a valid password");
       setErrors({
         ...errors,
@@ -116,8 +114,8 @@ const Page = () => {
             city: localhost?.city,
             id: res?.data?.data?._id,
             code_verified: res?.data?.data?.code_verified,
-            // password: "",
-            password: password
+            password: "",
+            // password: password
           };
           setUserDataInLocalStorage(userData);
           if (!res?.data?.code_verified) {
@@ -274,8 +272,8 @@ const Page = () => {
                       name="password"
                       className={`${errors?.password && "border-red-600"}`}
                       type="password"
-                      value={password}
-                      onChange={handleChange1}
+                      value={localhost?.password}
+                      onChange={handleChange}
                       placeholder="Password"
                       required
                     />

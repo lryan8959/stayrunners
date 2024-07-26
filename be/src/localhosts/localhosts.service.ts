@@ -6,13 +6,14 @@ import { Localhost } from 'src/schemas/Localhost.schema';
 import { CreateLocalhostDto } from './dtos/CreateLocalhost.dto';
 import { VerifyLocalhostDto } from './dtos/VerifyLocalhost.dto';
 import { hashPassword } from 'src/utils/bcrypt';
-import { generatePassword } from 'src/utils/generatePassword';
+//import { generatePassword } from 'src/utils/generatePassword';
 import { RoomRequests } from 'src/schemas/RoomRequests.schema';
 import { Room } from 'src/schemas/Room.schema';
 import { EmailService } from 'src/utils/EmailService';
 import { ForgotPasswordLocalhostDto } from './dtos/ForgotPasswordLocalhost.dto';
 import { Customer } from 'src/schemas/Customer.schema';
 import { Bid } from 'src/schemas/Bid.schema';
+
 
 @Injectable()
 export class LocalhostsService {
@@ -69,6 +70,10 @@ export class LocalhostsService {
     const verificationcode = Math.floor(100000 + Math.random() * 900000);
     createLocalhostDto.verification_code = verificationcode;
     // verification code send to local host's email
+
+    const Pass = await hashPassword(createLocalhostDto.password);
+    createLocalhostDto.password = Pass;
+
     const createdLocalhost = new this.localhostModel(createLocalhostDto);
     const savedUser = await createdLocalhost.save();
     const { _id, code_verified } = savedUser;
@@ -113,6 +118,7 @@ export class LocalhostsService {
     findByEmail.verification_code = verificationcode;
     findByEmail.verification_code_created_at = new Date();
     findByEmail.code_verified = false;
+    findByEmail.password = undefined;
     await findByEmail.save();
     await this.emailService.sendEmail(
       email,
@@ -146,6 +152,9 @@ export class LocalhostsService {
     const { verification_code } = verifyLocalhostDto;
     const localhost = await this.localhostModel.findById(id).exec();
 
+    //console.log("logcahost<<<<<<-->",localhost.password);
+    
+
     if (!localhost) {
       return 'Local does not exist';
     }
@@ -169,20 +178,39 @@ export class LocalhostsService {
     }
 
     // const password = generatePassword();
-    const password = verifyLocalhostDto.Password;
+    //const password = verifyLocalhostDto.Password;
     
-    const hashedPassword = hashPassword(password);
-
+    //const hashedPassword = hashPassword(password);
+if(localhost?.password){
     localhost.code_verified = true;
     localhost.code_verified_at = new Date();
-    localhost.password = hashedPassword;
+    //localhost.password = hashedPassword;
     await localhost.save();
     return {
       _id: localhost._id,
       name: localhost.name,
       code_verified: true,
-      password,
+      password: "",
     };
+  }
+  else{
+    //const password = generatePassword();
+   // const hashedPassword = hashPassword(password);
+
+    localhost.code_verified = true;
+    localhost.code_verified_at = new Date();
+    //localhost.password = hashedPassword;
+    await localhost.save();
+    return {
+      _id: localhost._id,
+      name: localhost.name,
+      code_verified: true,
+      password: undefined
+    };
+
+  }
+
+
   }
 
   async resendVerificationCode(id) {
@@ -434,6 +462,28 @@ export class LocalhostsService {
     }
 
     const hashedPassword = hashPassword(data.password);
+    user.password = hashedPassword;
+    user.updated_at = new Date();
+    const saved = await user.save();
+    if (saved) {
+      return { localhost };
+    }
+    return false;
+  }
+
+  async ResetPassword(localhost,password) {
+    const user = await this.localhostModel
+      .findOne({
+        _id: localhost,
+        code_verified: true,
+      })
+      .exec();
+
+    if (!user) {
+      return 'User not found';
+    }
+
+    const hashedPassword = hashPassword(password);
     user.password = hashedPassword;
     user.updated_at = new Date();
     const saved = await user.save();
