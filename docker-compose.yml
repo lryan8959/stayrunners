@@ -3,11 +3,18 @@ services:
   nestjs:
     build:
       context: ./be
-      args:
-        NODE_ENV: production
+      dockerfile: Dockerfile.dev
     ports:
       - "3120:3120"
-    restart: always
+    volumes:
+      - ./be:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./be/uploads:/usr/src/app/uploads
+      - ./ssl:/usr/ssl
+    environment:
+      - NODE_ENV=development
+    command: npm run start:dev
+
 
 #   elasticsearch:
 #     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.8
